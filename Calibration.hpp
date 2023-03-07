@@ -40,6 +40,7 @@
 
 #include <ARX/AR/ar.h>
 #include <opencv2/core/core.hpp>
+#include <opencv2/core/types_c.h>
 #include <ARX/ARVideoSource.h>
 #include <map>
 

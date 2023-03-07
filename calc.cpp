@@ -38,8 +38,7 @@
 
 #include "calc.hpp"
 
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/core/core_c.h>
+#include <opencv2/calib3d.hpp>
 
 static void convParam(const float intr[3][4], const float dist[AR_DIST_FACTOR_NUM_MAX], const int xsize, const int ysize, const int dist_function_version, ARParam *param);
 static ARdouble getSizeFactor(ARdouble const dist_factor[AR_DIST_FACTOR_NUM_MAX], const int xsize, const int ysize, const int dist_function_version);
@@ -137,22 +136,22 @@ void calc(const int capturedImageNum,
     convParam(intr, dist, width, height, dist_function_version, &param);
     arParamDisp(&param);
 
-    CvMat          *rotationVector;
-    CvMat          *rotationMatrix;
+    cv::Mat         rotationVector;
+    cv::Mat         rotationMatrix;
     double          trans[3][4];
     ARdouble        cx, cy, cz, hx, hy, h, sx, sy, ox, oy, err;
     ARdouble        err_min = 1000000.0f, err_avg = 0.0f, err_max = 0.0f;
-    rotationVector     = cvCreateMat(1, 3, CV_32FC1);
-    rotationMatrix     = cvCreateMat(3, 3, CV_32FC1);
+    rotationVector     = cv::Mat(1, 3, CV_32FC1);
+    rotationMatrix     = cv::Mat(3, 3, CV_32FC1);
 
     for (k = 0; k < capturedImageNum; k++) {
         for (i = 0; i < 3; i++) {
-            ((float *)(rotationVector->data.ptr))[i] = (float)rotationVectors.at(k).at<double>(i);
+            ((float *)(rotationVector.data))[i] = (float)rotationVectors.at(k).at<double>(i);
         }
-        cvRodrigues2(rotationVector, rotationMatrix, 0);
+        cv::Rodrigues(rotationVector, rotationMatrix);
         for (j = 0; j < 3; j++) {
             for (i = 0; i < 3; i++) {
-                trans[j][i] = ((float *)(rotationMatrix->data.ptr + rotationMatrix->step*j))[i];
+                trans[j][i] = rotationMatrix.at<float>(j, i);
             }
             trans[j][3] = (float)translationVectors.at(k).at<double>(j);
         }
@@ -192,9 +191,6 @@ void calc(const int capturedImageNum,
     *err_max_out = err_max;
 
     *param_out = param;
-
-    cvReleaseMat(&rotationVector);
-    cvReleaseMat(&rotationMatrix);
 }
 
 static void convParam(const float intr[3][4], const float dist[AR_DIST_FACTOR_NUM_MAX], const int xsize, const int ysize, const int dist_function_version, ARParam *param)

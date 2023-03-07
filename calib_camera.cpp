@@ -32,6 +32,7 @@
  *  are not obligated to do so. If you do not wish to do so, delete this exception
  *  statement from your version.
  *
+ *  Copyright 2019-2023 Philip Lamb
  *  Copyright 2018 Realmax, Inc.
  *  Copyright 2015-2016 Daqri, LLC.
  *  Copyright 2002-2015 ARToolworks, Inc.
@@ -237,7 +238,7 @@ static void startVideo(void)
         vs->configure(buf, true, NULL, NULL, 0);
         if (!vs->open()) {
             ARLOGe("Error: Unable to open video source.\n");
-            EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2018 Realmax, Inc. & (c)2017 DAQRI LLC.\n\nUnable to open video source.\n\nPress 'p' for settings and help.");
+            EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nPress 'p' for settings and help.");
         }
     }
     gPostVideoSetupDone = false;
@@ -995,7 +996,7 @@ void drawView(void)
                 vertices[i*8 + 7] = vs->getVideoHeight() - corners[i].y - 5.0f;
                 
                 unsigned char buf[12]; // 10 digits in INT32_MAX, plus sign, plus null.
-                sprintf((char *)buf, "%d\n", i);
+                snprintf((char *)buf, sizeof(buf), "%d\n", i);
                 
                 GLfloat mvp[16];
 #if !HAVE_GLES2

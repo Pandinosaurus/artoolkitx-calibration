@@ -39,6 +39,7 @@
 #include "Calibration.hpp"
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core_c.h>
 #include "calc.hpp"
 
 //
@@ -214,7 +215,7 @@ void *Calibration::cornerFinder(THREAD_HANDLE_T *threadHandle)
         
         switch (cornerFinderDataPtr->patternType) {
             case CalibrationPatternType::CHESSBOARD:
-                cornerFinderDataPtr->cornerFoundAllFlag = cv::findChessboardCorners(cv::cvarrToMat(cornerFinderDataPtr->calibImage), cornerFinderDataPtr->patternSize, cornerFinderDataPtr->corners, CV_CALIB_CB_FAST_CHECK|CV_CALIB_CB_ADAPTIVE_THRESH|CV_CALIB_CB_FILTER_QUADS);
+                cornerFinderDataPtr->cornerFoundAllFlag = cv::findChessboardCorners(cv::cvarrToMat(cornerFinderDataPtr->calibImage), cornerFinderDataPtr->patternSize, cornerFinderDataPtr->corners, cv::CALIB_CB_FAST_CHECK|cv::CALIB_CB_ADAPTIVE_THRESH|cv::CALIB_CB_FILTER_QUADS);
                 break;
             case CalibrationPatternType::CIRCLES_GRID:
                 cornerFinderDataPtr->cornerFoundAllFlag = cv::findCirclesGrid(cv::cvarrToMat(cornerFinderDataPtr->calibImage), cornerFinderDataPtr->patternSize, cornerFinderDataPtr->corners, cv::CALIB_CB_SYMMETRIC_GRID);

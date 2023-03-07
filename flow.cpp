@@ -236,7 +236,7 @@ static void *flowThread(void *arg)
 	while (!gStop) {
 
 		if (flowStateGet() == FLOW_STATE_WELCOME) {
-			EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2018 Realmax, Inc. & (c)2017 DAQRI LLC.\n\nPress 'space' to begin a calibration run.\n\nPress 'p' for settings and help.");
+			EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nPress 'space' to begin a calibration run.\n\nPress 'p' for settings and help.");
 		} else {
 			EdenMessageShow((const unsigned char *)"Press 'space' to begin a calibration run.\n\nPress 'p' for settings and help.");
 		}

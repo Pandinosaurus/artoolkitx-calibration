@@ -941,7 +941,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
                 vertices[i*8 + 7] = vs->getVideoHeight() - corners[i].y - 5.0f;
                 
                 unsigned char buf[12]; // 10 digits in INT32_MAX, plus sign, plus null.
-                sprintf((char *)buf, "%d\n", i);
+                snprintf((char *)buf, sizeof(buf), "%d\n", i);
                 
                 GLfloat mvp[16];
                 mtxLoadMatrixf(mvp, p);
