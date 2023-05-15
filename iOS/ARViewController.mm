@@ -1303,7 +1303,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
                                 ]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Help" style:UIAlertActionStyleDefault handler:
                                 ^(UIAlertAction *action) {
-                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/artoolkitx/artoolkitx-calibration/wiki"]];
+                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/artoolkitx/artoolkitx-calibration/wiki"] options:nil completionHandler:nil];
                                 }
                                 ]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Print" style:UIAlertActionStyleDefault handler:

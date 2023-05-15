@@ -19,7 +19,7 @@ set -x
 # Get our location.
 OURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-SDK_VERSION='1.1'
+SDK_VERSION='1.1.8'
 # If the version number includes a dev build number, drop it.
 SDK_VERSION_CANON=`echo -n "${SDK_VERSION}" | sed -E -e 's/([0-9]+\.[0-9]+\.[0-9]+)(\.[0-9])?/\1/'`
 # If the tiny version number is 0, drop it.

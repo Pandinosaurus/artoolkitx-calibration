@@ -1,6 +1,8 @@
 depends/ios/include/ARX/
 depends/ios/lib/libARX.a
+depends/ios/Frameworks/opencv2.framework
 depends/macos/Frameworks/ARX.framework/
+depends/macos/Frameworks/opencv2.framework
 Linux/build/
 iOS/user-config.xcconfig
 iOS/build/
