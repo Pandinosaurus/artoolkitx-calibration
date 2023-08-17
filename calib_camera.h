@@ -42,6 +42,8 @@
 
 #ifdef __APPLE__
 #  include <SDL2/SDL.h>
+#elif defined(ANDROID)
+#  include <SDL3/SDL.h>
 #else
 #  include "SDL2/SDL.h"
 #endif
