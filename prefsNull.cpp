@@ -99,6 +99,10 @@ float getPreferencesCalibrationPatternSpacing(void *preferences)
 #if !ARX_TARGET_PLATFORM_MACOS && !ARX_TARGET_PLATFORM_LINUX
 char *getPreferenceCalibSaveDir(void *preferences)
 {
+#ifndef ANDROID
     return arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_USER_ROOT);
+#else
+    return arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_USER_ROOT, NULL);
+#endif
 }
 #endif

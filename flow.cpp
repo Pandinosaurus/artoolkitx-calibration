@@ -46,6 +46,7 @@
 #include <pthread.h>
 #include <Eden/EdenMessage.h>
 #include <ARX/AR/ar.h>
+#include <ARX/ARUtil/time.h>
 
 //
 // Globals.
@@ -197,18 +198,21 @@ static EVENT_t flowWaitForEvent(void)
 
 	pthread_mutex_lock(&gEventLock);
 	while (gEvent == EVENT_NONE && !gStop) {
-#ifdef ANDROID
-        // Android "Bionic" libc doesn't implement cancelation, so need to let wait expire somewhat regularly.
-        const struct timespec twoSeconds = {2, 0};
-        pthread_cond_timedwait_relative_np(&gEventCond, &gEventLock, &twoSeconds);
-#else
-		pthread_cond_wait(&gEventCond, &gEventLock);
-#endif
+        uint64_t sec;
+        uint32_t usec;
+        arUtilTimeSinceEpoch(&sec, &usec);
+        struct timespec ts;
+        ts.tv_sec = sec + 2;
+        ts.tv_nsec = usec * 1000;
+        int err = pthread_cond_timedwait(&gEventCond, &gEventLock, &ts);
+        if (err != ETIMEDOUT && err != 0) {
+            ARLOGe("flowWaitForEvent(): pthread_cond_timedwait error %s (%d).\n", strerror(err), err);
+            gStop = true;
+        }
 	}
 	ret = gEvent;
 	gEvent = EVENT_NONE; // Clear wait state.
 	pthread_mutex_unlock(&gEventLock);
-
 	return (ret);
 }
 

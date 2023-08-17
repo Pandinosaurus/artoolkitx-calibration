@@ -83,6 +83,10 @@
 #  elif HAVE_GLES2
 #    include <SDL2/SDL_opengles2.h>
 #  endif
+#elif defined(ANDROID)
+#  include <SDL3/SDL_main.h>
+#  include <SDL3/SDL_opengles2.h>
+#  define HAVE_SDL3
 #else
 #  if (HAVE_GL || HAVE_GL3)
 #    include "SDL2/SDL_opengl.h"
@@ -195,7 +199,12 @@ static int contextHeight = 0;
 static bool contextWasUpdated = false;
 static SDL_Window* gSDLWindow = NULL;
 static int32_t gViewport[4] = {0, 0, 0, 0}; // {x, y, width, height}
-static int gDisplayOrientation = 1; // range [0-3]. 1=landscape.
+static int gDisplayOrientation = 
+#ifndef ANDROID
+    1; // range [0-3]. 1=landscape.
+#else
+    0; // range [0-3]. 0=portrait.
+#endif
 static float gDisplayDPI = 72.0f;
 #if HAVE_GLES2
 static GLint uniforms[UNIFORM_COUNT] = {0};
@@ -222,6 +231,13 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
 
 static void startVideo(void)
 {
+#ifdef ANDROID
+    if (SDL_AndroidRequestPermission("android.permission.CAMERA") != SDL_TRUE) {
+        ARLOGe("Error: Unable to open video source.\n");
+        EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nPress 'p' for settings and help.");
+        return;  
+    }
+#endif
     char *buf = NULL;
     if (asprintf(&buf, "%s%s%s",
              (gPreferenceCameraOpenToken ? gPreferenceCameraOpenToken : ""),
@@ -339,6 +355,9 @@ int main(int argc, char *argv[])
     arLogLevel = AR_LOG_LEVEL_DEBUG;
 #endif
 
+    // For mobile platforms, lock to portrait.
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait");
+    
     // Initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         ARLOGe("Error: SDL initialisation failed. SDL error: '%s'.\n", SDL_GetError());
@@ -364,9 +383,14 @@ int main(int argc, char *argv[])
     
     // Create a window.
     gSDLWindow = SDL_CreateWindow("artoolkitX Camera Calibration Utility",
+#ifndef HAVE_SDL3
                                   SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+#endif
                                   1280, 720,
-                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+#ifndef HAVE_SDL3
+                                  | SDL_WINDOW_ALLOW_HIGHDPI
+#endif
                                   );
     if (!gSDLWindow) {
         ARLOGe("Error creating window: %s.\n", SDL_GetError());
@@ -423,10 +447,22 @@ int main(int argc, char *argv[])
     }
 
     int w, h;
-    SDL_GL_GetDrawableSize(SDL_GL_GetCurrentWindow(), &w, &h);
+    SDL_Window *window = SDL_GL_GetCurrentWindow();
+#ifndef HAVE_SDL3
+    SDL_GL_GetDrawableSize(window, &w, &h);
+#else
+    SDL_GetWindowSizeInPixels(window, &w, &h);
+#endif
     reshape(w, h);
     
-    asprintf(&gFileUploadQueuePath, "%s/%s", arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR), QUEUE_DIR);
+#ifndef ANDROID
+    char *cachePath = arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR);
+#else
+    char *cachePath = arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR, NULL);
+    arUtilChangeToResourcesDirectory(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_SUPPLIED_PATH, cachePath, NULL);
+#endif
+    asprintf(&gFileUploadQueuePath, "%s/%s", cachePath, QUEUE_DIR);
+    free(cachePath);
     // Check for QUEUE_DIR and create if not already existing.
     if (!fileUploaderCreateQueueDir(gFileUploadQueuePath)) {
         ARLOGe("Error: Could not create queue directory.\n");
@@ -528,9 +564,16 @@ int main(int argc, char *argv[])
         
         SDL_Event ev;
         while (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_QUIT /*|| (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_ESCAPE)*/) {
+            if (ev.type == 
+#ifndef HAVE_SDL3
+                SDL_QUIT
+#else
+                SDL_EVENT_QUIT
+#endif
+                /*|| (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_ESCAPE)*/) {
                 done = true;
                 break;
+#ifndef HAVE_SDL3
             } else if (ev.type == SDL_WINDOWEVENT) {
                 //ARLOGd("Window event %d.\n", ev.window.event);
                 if (ev.window.event == SDL_WINDOWEVENT_RESIZED && ev.window.windowID == SDL_GetWindowID(gSDLWindow)) {
@@ -540,14 +583,37 @@ int main(int argc, char *argv[])
                     SDL_GL_GetDrawableSize(gSDLWindow, &w, &h);
                     reshape(w, h);
                 }
-            } else if (ev.type == SDL_KEYDOWN) {
+#else
+            } else if (ev.type == SDL_EVENT_WINDOW_RESIZED) {
+                //ARLOGd("Window resized event %d.\n", ev.window.event);
+                if (ev.window.windowID == SDL_GetWindowID(gSDLWindow)) {
+                    //int32_t w = ev.window.data1;
+                    //int32_t h = ev.window.data2;
+                    int w, h;
+                    SDL_GetWindowSizeInPixels(gSDLWindow, &w, &h);
+                    reshape(w, h);
+                }
+#endif
+            } else if (ev.type == 
+#ifndef HAVE_SDL3
+                SDL_KEYDOWN
+#else
+                SDL_EVENT_KEY_DOWN
+#endif
+                ) {
                 if (EdenMessageKeyboardRequired()) {
                     EdenMessageInputKeyboard(ev.key.keysym.sym);
                 } else if (ev.key.keysym.sym == SDLK_ESCAPE) {
                     flowHandleEvent(EVENT_BACK_BUTTON);
                 } else if (ev.key.keysym.sym == SDLK_SPACE) {
                     flowHandleEvent(EVENT_TOUCH);
-                } else if ((ev.key.keysym.sym == SDLK_COMMA && (ev.key.keysym.mod & KMOD_LGUI)) || ev.key.keysym.sym == SDLK_p) {
+                } else if ((ev.key.keysym.sym == SDLK_COMMA && (ev.key.keysym.mod & 
+#ifndef HAVE_SDL3
+                    KMOD_LGUI
+#else
+                    SDL_KMOD_LGUI
+#endif
+                    )) || ev.key.keysym.sym == SDLK_p) {
                     showPreferences(gPreferences);
                 }
             } else if (gSDLEventPreferencesChanged != 0 && ev.type == gSDLEventPreferencesChanged) {
@@ -1147,7 +1213,12 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
     int ID = timeptr->tm_hour*10000 + timeptr->tm_min*100 + timeptr->tm_sec;
     
     // Save the parameter file.
-    snprintf(paramPathname, SAVEPARAM_PATHNAME_LEN, "%s/%s/%06d-camera_para.dat", arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR), QUEUE_DIR, ID);
+    #ifndef ANDROID
+    char *cachePath = arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR);
+#else
+    char *cachePath = arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR, NULL);
+#endif
+    snprintf(paramPathname, SAVEPARAM_PATHNAME_LEN, "%s/%s/%06d-camera_para.dat", cachePath, QUEUE_DIR, ID);
     
     //if (arParamSave(strcat(strcat(docsPath,"/"),paramPathname), 1, param) < 0) {
     if (arParamSave(paramPathname, 1, param) < 0) {
@@ -1232,6 +1303,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
             }
             free(device_id);
             free(focal_length);
+            free(cachePath);
             return;
         };
 
@@ -1240,7 +1312,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         //
         
         // Open the file.
-        snprintf(indexPathname, SAVEPARAM_PATHNAME_LEN, "%s/%s/%06d-index", arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR), QUEUE_DIR, ID);
+        snprintf(indexPathname, SAVEPARAM_PATHNAME_LEN, "%s/%s/%06d-index", cachePath, QUEUE_DIR, ID);
         FILE *fp;
         bool goodWrite = true;
         if (!(fp = fopen(indexPathname, "wb"))) {
@@ -1370,6 +1442,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         free(device_id);
         free(focal_length);
     }
+    free(cachePath);
 }
 
 

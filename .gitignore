@@ -10,3 +10,9 @@ macOS/user-config.xcconfig
 macOS/build/
 xcuserdata/
 *.xcscmblueprint
+local.properties
+Android/app/.cxx
+Android/app/build
+Android/build
+Android/.gradle
+depends/android/artoolkitx

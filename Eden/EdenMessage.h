@@ -165,7 +165,7 @@ EDEN_E_t EdenMessage(unsigned char *msg, const unsigned int secs);
 		used in a multi-threaded application, where other operations,
 		including the actual drawing and keystroke collection, occur in a
 		separate thread.
-		Applications requiring that the routine routine immediately, such
+		Applications requiring that the routine return immediately, such
 		as single-threaded applications, should not call this routine, but
 		should manually control the showing and hiding.
 	@param      prompt The message to show above and to the left of the user's input.

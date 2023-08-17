@@ -19,7 +19,7 @@ set -x
 # Get our location.
 OURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-SDK_VERSION='1.1.8'
+SDK_VERSION='1.1.12'
 # If the version number includes a dev build number, drop it.
 SDK_VERSION_CANON=`echo -n "${SDK_VERSION}" | sed -E -e 's/([0-9]+\.[0-9]+\.[0-9]+)(\.[0-9])?/\1/'`
 # If the tiny version number is 0, drop it.
@@ -54,6 +54,8 @@ do
         linux-raspbian) BUILD_LINUX_RASPBIAN=1
             ;;
         windows) BUILD_WINDOWS=1
+            ;;
+        android) BUILD_ANDROID=1
             ;;
         --debug) DEBUG=
             ;;
@@ -182,6 +184,24 @@ if [ $BUILD_IOS ] ; then
     )
 fi
 # /BUILD_MACOS
+
+if [ $BUILD_ANDROID ] ; then
+    
+    # If artoolkitx folder is not a symlink, fetch artoolkitx from latest build into a location where the build can find it.
+    if [[ ! -L "${OURDIR}/depends/android/artoolkitx" ]] ; then
+        SDK_FILENAME="artoolkitx-${SDK_VERSION_PRETTY}-Android.zip"
+        if [ ! -f "${OURDIR}/${SDK_FILENAME}" ] ; then
+            curl -f -o "${OURDIR}/${SDK_FILENAME}" --location "${SDK_URL_DIR}$(rawurlencode "${SDK_FILENAME}")"
+        fi
+        rm -rf "${OURDIR}/depends/android/artoolkitx"
+        unzip "${OURDIR}/${SDK_FILENAME}" -d "${OURDIR}/depends/android/artoolkitx"
+    fi
+    (cd "${OURDIR}/Android"
+    echo "Building Android project"
+    ./gradlew assembleRelease
+    )
+fi
+# /BUILD_ANDROID
 
 fi
 # /Darwin
