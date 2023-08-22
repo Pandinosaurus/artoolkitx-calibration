@@ -2,9 +2,11 @@ package org.artoolkitx.utilities.cameracalibration;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +26,11 @@ public class CameraCalibrationSettingsFragment extends PreferenceFragmentCompat 
     @SuppressWarnings("ConstantConditions")
     public void onCreatePreferences(Bundle savedInstanceState, @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.cameracalibrationsettings, rootKey);
+
         final ListPreference camera = (ListPreference)findPreference("camera");
+        setCameraInputList(camera);
+
+        // Toggle fields on or off.
         final SwitchPreferenceCompat upload_canonical = (SwitchPreferenceCompat)findPreference("upload_canonical");
         final SwitchPreferenceCompat upload_user = (SwitchPreferenceCompat)findPreference("upload_user");
         final EditTextPreference upload_user_csuu = (EditTextPreference)findPreference("upload_user_csuu");
@@ -40,7 +46,30 @@ public class CameraCalibrationSettingsFragment extends PreferenceFragmentCompat 
             upload_user_csuu.setVisible(false);
             upload_user_csat.setVisible(false);
         }
-        setCameraInputList(camera);
+
+        // Set numeric fields.
+        EditTextPreference camera_width = findPreference("camera_width");
+        EditTextPreference camera_height = findPreference("camera_height");
+        EditTextPreference pattern_width = findPreference("pattern_width");
+        EditTextPreference pattern_height = findPreference("pattern_height");
+        EditTextPreference pattern_spacing = findPreference("pattern_spacing");
+        EditTextPreference.OnBindEditTextListener numbersOnly = new EditTextPreference.OnBindEditTextListener() {
+            @Override
+            public void onBindEditText(@NonNull EditText editText) {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            }
+        };
+        EditTextPreference.OnBindEditTextListener numbersDecimalOnly = new EditTextPreference.OnBindEditTextListener() {
+            @Override
+            public void onBindEditText(@NonNull EditText editText) {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            }
+        };
+        camera_width.setOnBindEditTextListener(numbersOnly);
+        camera_height.setOnBindEditTextListener(numbersOnly);
+        pattern_width.setOnBindEditTextListener(numbersOnly);
+        pattern_height.setOnBindEditTextListener(numbersOnly);
+        pattern_spacing.setOnBindEditTextListener(numbersDecimalOnly);
     }
 
     @NonNull

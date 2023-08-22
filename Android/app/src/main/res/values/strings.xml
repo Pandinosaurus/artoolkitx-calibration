@@ -16,6 +16,7 @@
         <item>front</item>
         <item>external</item>
     </string-array>
+    <string name="camera_position_default_value">rear</string>
     <string-array name="camera_size_strategies">
         <item>Any size</item>
         <item>Exact size</item>
@@ -38,6 +39,9 @@
         <item>largest</item>
         <item>smallest</item>
     </string-array>
+    <string name="camera_size_strategy_default_value">closestpixelcount</string>
+    <string name="camera_width_default_value">640</string>
+    <string name="camera_height_default_value">480</string>
     <string-array name="print_paper_sizes">
         <item>A4</item>
         <item>US Letter</item>
@@ -46,6 +50,7 @@
         <item>a4</item>
         <item>usletter</item>
     </string-array>
+    <string name="print_paper_size_default_value">a4</string>
     <string-array name="calibration_patterns">
         <item>Chessboard</item>
         <item>Circles</item>

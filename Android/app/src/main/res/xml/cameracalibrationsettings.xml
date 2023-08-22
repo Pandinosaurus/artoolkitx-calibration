@@ -18,6 +18,7 @@
             app:useSimpleSummaryProvider="true"
             android:entries="@array/camera_positions"
             android:entryValues="@array/camera_positions_values"
+            android:defaultValue="@string/camera_position_default_value"
             app:isPreferenceVisible="false" />
 
         <ListPreference
@@ -25,20 +26,22 @@
             app:title="Select camera frame size by"
             app:useSimpleSummaryProvider="true"
             android:entries="@array/camera_size_strategies"
-            android:entryValues="@array/camera_size_strategies_values" />
+            android:entryValues="@array/camera_size_strategies_values"
+            android:defaultValue="@string/camera_size_strategy_default_value" />
 
         <EditTextPreference
             app:key="camera_width"
             app:title="Width"
             app:useSimpleSummaryProvider="true"
-            android:inputType="number" />
+            android:inputType="number"
+            android:defaultValue="@string/camera_width_default_value" />
 
         <EditTextPreference
             app:key="camera_height"
             app:title="Height"
             app:useSimpleSummaryProvider="true"
-            android:inputType="number" />
-
+            android:inputType="number"
+            android:defaultValue="@string/camera_height_default_value" />
 
     </PreferenceCategory>
 
@@ -51,7 +54,8 @@
             app:title="Paper size"
             app:useSimpleSummaryProvider="true"
             android:entries="@array/print_paper_sizes"
-            android:entryValues="@array/print_paper_sizes_values" />
+            android:entryValues="@array/print_paper_sizes_values"
+            android:defaultValue="@string/print_paper_size_default_value" />
 
     </PreferenceCategory>
 
@@ -61,16 +65,19 @@
         
         <SwitchPreferenceCompat
             app:key="save"
-            app:title="Save calibration"/>
+            app:title="Save calibration"
+            android:defaultValue="false" />
     
         <SwitchPreferenceCompat
             app:key="upload_canonical"
             app:title="Upload calibration to artoolkitx.org"
+            android:defaultValue="true"
             app:isPreferenceVisible="false" />
     
         <SwitchPreferenceCompat
             app:key="upload_user"
-            app:title="Upload calibration to artoolkitx.org"
+            app:title="Upload calibration to my server"
+            android:defaultValue="false"
             app:isPreferenceVisible="false" />
     
         <EditTextPreference
