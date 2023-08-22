@@ -1,0 +1,121 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="camera_category"
+        app:title="Camera settings">
+
+        <ListPreference
+            app:key="camera"
+            app:title="Camera"
+            app:useSimpleSummaryProvider="true"
+            android:entries="@array/cameras"
+            android:entryValues="@array/cameras_values" />
+
+        <ListPreference
+            app:key="camera_position"
+            app:title="Camera position"
+            app:useSimpleSummaryProvider="true"
+            android:entries="@array/camera_positions"
+            android:entryValues="@array/camera_positions_values"
+            app:isPreferenceVisible="false" />
+
+        <ListPreference
+            app:key="camera_size_strategy"
+            app:title="Select camera frame size by"
+            app:useSimpleSummaryProvider="true"
+            android:entries="@array/camera_size_strategies"
+            android:entryValues="@array/camera_size_strategies_values" />
+
+        <EditTextPreference
+            app:key="camera_width"
+            app:title="Width"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+
+        <EditTextPreference
+            app:key="camera_height"
+            app:title="Height"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="print_category"
+        app:title="Print settings">
+
+        <ListPreference
+            app:key="print_paper_size"
+            app:title="Paper size"
+            app:useSimpleSummaryProvider="true"
+            android:entries="@array/print_paper_sizes"
+            android:entryValues="@array/print_paper_sizes_values" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="saving_category"
+        app:title="Calibration saving settings">
+        
+        <SwitchPreferenceCompat
+            app:key="save"
+            app:title="Save calibration"/>
+    
+        <SwitchPreferenceCompat
+            app:key="upload_canonical"
+            app:title="Upload calibration to artoolkitx.org"
+            app:isPreferenceVisible="false" />
+    
+        <SwitchPreferenceCompat
+            app:key="upload_user"
+            app:title="Upload calibration to artoolkitx.org"
+            app:isPreferenceVisible="false" />
+    
+        <EditTextPreference
+            app:key="upload_user_csuu"
+            app:title="My calibration server upload URL"
+            app:useSimpleSummaryProvider="true"
+            app:isPreferenceVisible="false" />
+
+        <EditTextPreference
+            app:key="upload_user_csat"
+            app:title="My calibration server authentication token"
+            app:useSimpleSummaryProvider="true"
+            app:isPreferenceVisible="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="pattern_category"
+        app:title="Calibration pattern settings">
+
+        <ListPreference
+            app:key="pattern"
+            app:title="Calibration pattern"
+            app:useSimpleSummaryProvider="true"
+            android:entries="@array/calibration_patterns"
+            android:entryValues="@array/calibration_patterns_values" />
+
+        <EditTextPreference
+            app:key="pattern_width"
+            app:title="Width"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+
+        <EditTextPreference
+            app:key="pattern_height"
+            app:title="Height"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+
+        <EditTextPreference
+            app:key="pattern_spacing"
+            app:title="Spacing (mm)"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="numberDecimal" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
