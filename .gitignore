@@ -1,18 +1,67 @@
+#### OS-generated caches and resources
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### git merge conflict files
+*.orig
+
+#### Intermediate build products
+*.o
+
+#### Intermediate Language products
+*.dex
+*.class
+
+# Android Studio
+**/.gradle/
+**/.idea/caches
+**/.idea/deploymentTargetDropDown.xml
+**/.idea/libraries
+**/.idea/workspace.xml
+**/.idea/navEditor.xml
+**/.idea/assetWizardSettings.xml
+**/captures/
+**/.externalNativeBuild/
+**/.cxx/
+local.properties
+
+# MonoDevelop/Xamarin Studio
+*.userprefs
+
+# Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vscode/settings.json
+
+# Xcode
+xcuserdata/
+*.mode1*
+*.pbxuser
+*.xccheckout
+*.xcscmblueprint
+
+# Dependencies
 depends/ios/include/ARX/
 depends/ios/lib/libARX.a
 depends/ios/Frameworks/opencv2.framework
 depends/macos/Frameworks/ARX.framework/
 depends/macos/Frameworks/opencv2.framework
+depends/android/artoolkitx
+
+# Build files
 Linux/build/
 iOS/user-config.xcconfig
 iOS/build/
 macOS/user-config.xcconfig
 macOS/build/
-xcuserdata/
-*.xcscmblueprint
-local.properties
-Android/app/.cxx
 Android/app/build
 Android/build
-Android/.gradle
-depends/android/artoolkitx
+
+# Other

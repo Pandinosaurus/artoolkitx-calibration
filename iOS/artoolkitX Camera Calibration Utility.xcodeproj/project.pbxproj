@@ -23,12 +23,13 @@
 		4A0E117C1E8B3A150074C280 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0E117B1E8B3A150074C280 /* AudioToolbox.framework */; };
 		4A0E11841E8CAAFA0074C280 /* prefsNull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0E11831E8CAAFA0074C280 /* prefsNull.cpp */; };
 		4A0EBFCF1EC3E37600B0D585 /* prefDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A0EBFCE1EC3E37600B0D585 /* prefDefaults.plist */; };
+		4A17ED942A958DCD009FAA72 /* loc_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A17ED932A958DCD009FAA72 /* loc_strings.cpp */; };
+		4A17ED962A959299009FAA72 /* flow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A17ED952A959299009FAA72 /* flow.cpp */; };
 		4A47934C1E80CDBE002C3631 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A47934B1E80CDBE002C3631 /* main.m */; };
 		4A47934F1E80CDBE002C3631 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A47934E1E80CDBE002C3631 /* AppDelegate.m */; };
 		4A47936C1E80CF96002C3631 /* ARViewOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4793661E80CF96002C3631 /* ARViewOverlay.m */; };
 		4A47936D1E80CF96002C3631 /* CameraFocusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A4793681E80CF96002C3631 /* CameraFocusView.m */; };
 		4A47936E1E80CF96002C3631 /* SettingsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A47936A1E80CF96002C3631 /* SettingsViewController.mm */; };
-		4A4793861E80CFD4002C3631 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4A4793731E80CFD4002C3631 /* Localizable.strings */; };
 		4A4793871E80CFD4002C3631 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A4793751E80CFD4002C3631 /* Images.xcassets */; };
 		4A4793881E80CFD4002C3631 /* Iris-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A4793761E80CFD4002C3631 /* Iris-568h@2x.png */; };
 		4A4793891E80CFD4002C3631 /* Iris-iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A4793771E80CFD4002C3631 /* Iris-iPad.png */; };
@@ -44,7 +45,6 @@
 		4A47939E1E80D195002C3631 /* calc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A4793981E80D195002C3631 /* calc.cpp */; };
 		4A47939F1E80D195002C3631 /* Calibration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A47939A1E80D195002C3631 /* Calibration.cpp */; };
 		4A4793A01E80D195002C3631 /* fileUploader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A47939C1E80D195002C3631 /* fileUploader.c */; };
-		4A4793A51E80D85A002C3631 /* flow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A4793A41E80D85A002C3631 /* flow.mm */; };
 		4A4793CE1E80D945002C3631 /* EdenTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A4793B21E80D945002C3631 /* EdenTime.c */; };
 		4A4793CF1E80D945002C3631 /* EdenUtil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A4793B41E80D945002C3631 /* EdenUtil.c */; };
 		4A79ED8420A5249C0087591E /* EdenUIInput.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A79ED8220A5249C0087591E /* EdenUIInput.c */; };
@@ -88,6 +88,9 @@
 		4A0E117B1E8B3A150074C280 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		4A0E11831E8CAAFA0074C280 /* prefsNull.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = prefsNull.cpp; path = ../prefsNull.cpp; sourceTree = "<group>"; };
 		4A0EBFCE1EC3E37600B0D585 /* prefDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = prefDefaults.plist; sourceTree = "<group>"; };
+		4A17ED922A958DCD009FAA72 /* loc_strings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = loc_strings.hpp; path = ../loc_strings.hpp; sourceTree = "<group>"; };
+		4A17ED932A958DCD009FAA72 /* loc_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = loc_strings.cpp; path = ../loc_strings.cpp; sourceTree = "<group>"; };
+		4A17ED952A959299009FAA72 /* flow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flow.cpp; path = ../flow.cpp; sourceTree = "<group>"; };
 		4A4793471E80CDBE002C3631 /* artoolkitX Camera Calibration Utility.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "artoolkitX Camera Calibration Utility.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A47934B1E80CDBE002C3631 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4A47934D1E80CDBE002C3631 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -99,7 +102,6 @@
 		4A4793681E80CF96002C3631 /* CameraFocusView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraFocusView.m; sourceTree = "<group>"; };
 		4A4793691E80CF96002C3631 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		4A47936A1E80CF96002C3631 /* SettingsViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsViewController.mm; sourceTree = "<group>"; };
-		4A4793741E80CFD4002C3631 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		4A4793751E80CFD4002C3631 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4A4793761E80CFD4002C3631 /* Iris-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Iris-568h@2x.png"; sourceTree = "<group>"; };
 		4A4793771E80CFD4002C3631 /* Iris-iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Iris-iPad.png"; sourceTree = "<group>"; };
@@ -118,7 +120,6 @@
 		4A47939B1E80D195002C3631 /* Calibration.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Calibration.hpp; path = ../Calibration.hpp; sourceTree = "<group>"; };
 		4A47939C1E80D195002C3631 /* fileUploader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fileUploader.c; path = ../fileUploader.c; sourceTree = "<group>"; };
 		4A47939D1E80D195002C3631 /* fileUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileUploader.h; path = ../fileUploader.h; sourceTree = "<group>"; };
-		4A4793A41E80D85A002C3631 /* flow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = flow.mm; sourceTree = "<group>"; };
 		4A4793A61E80D867002C3631 /* flow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = flow.hpp; path = ../flow.hpp; sourceTree = "<group>"; };
 		4A4793A91E80D945002C3631 /* Eden.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Eden.h; sourceTree = "<group>"; };
 		4A4793AA1E80D945002C3631 /* EdenError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenError.h; sourceTree = "<group>"; };
@@ -247,8 +248,10 @@
 				4A47939A1E80D195002C3631 /* Calibration.cpp */,
 				4A47939D1E80D195002C3631 /* fileUploader.h */,
 				4A47939C1E80D195002C3631 /* fileUploader.c */,
+				4A17ED922A958DCD009FAA72 /* loc_strings.hpp */,
+				4A17ED932A958DCD009FAA72 /* loc_strings.cpp */,
 				4A4793A61E80D867002C3631 /* flow.hpp */,
-				4A4793A41E80D85A002C3631 /* flow.mm */,
+				4A17ED952A959299009FAA72 /* flow.cpp */,
 				4A0AB6821E81DFCE00F6EBB9 /* prefs.hpp */,
 				4A0E11831E8CAAFA0074C280 /* prefsNull.cpp */,
 				4A4793671E80CF96002C3631 /* CameraFocusView.h */,
@@ -288,7 +291,6 @@
 		4A4793721E80CFD4002C3631 /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				4A4793731E80CFD4002C3631 /* Localizable.strings */,
 			);
 			path = en.lproj;
 			sourceTree = "<group>";
@@ -435,7 +437,6 @@
 				4A4793931E80CFD4002C3631 /* reveal-icon.png in Resources */,
 				4A4793911E80CFD4002C3631 /* printa4.pdf in Resources */,
 				4A47938A1E80CFD4002C3631 /* Iris-iPad@2x.png in Resources */,
-				4A4793861E80CFD4002C3631 /* Localizable.strings in Resources */,
 				4A4793881E80CFD4002C3631 /* Iris-568h@2x.png in Resources */,
 				4A0EBFCF1EC3E37600B0D585 /* prefDefaults.plist in Resources */,
 				4A4793891E80CFD4002C3631 /* Iris-iPad.png in Resources */,
@@ -451,12 +452,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4ADE9C1F1E8887CF00F04AC0 /* glut_hel12.c in Sources */,
-				4A4793A51E80D85A002C3631 /* flow.mm in Sources */,
 				4A47934F1E80CDBE002C3631 /* AppDelegate.m in Sources */,
 				4ADE9C261E8887CF00F04AC0 /* glut_tr24.c in Sources */,
 				4A47936C1E80CF96002C3631 /* ARViewOverlay.m in Sources */,
 				4A47939E1E80D195002C3631 /* calc.cpp in Sources */,
 				4A4793CE1E80D945002C3631 /* EdenTime.c in Sources */,
+				4A17ED942A958DCD009FAA72 /* loc_strings.cpp in Sources */,
 				4A0AB6811E81DA6900F6EBB9 /* ARViewController.mm in Sources */,
 				4ADE9C251E8887CF00F04AC0 /* glut_tr10.c in Sources */,
 				4A47936D1E80CF96002C3631 /* CameraFocusView.m in Sources */,
@@ -467,6 +468,7 @@
 				4ADE9C191E8887B200F04AC0 /* readtex.c in Sources */,
 				4ADE9C1C1E8887CF00F04AC0 /* glut_bitmap.c in Sources */,
 				4ADE9C231E8887CF00F04AC0 /* glut_stroke.c in Sources */,
+				4A17ED962A959299009FAA72 /* flow.cpp in Sources */,
 				4A0E11841E8CAAFA0074C280 /* prefsNull.cpp in Sources */,
 				4A47934C1E80CDBE002C3631 /* main.m in Sources */,
 				4A4793A01E80D195002C3631 /* fileUploader.c in Sources */,
@@ -485,17 +487,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		4A4793731E80CFD4002C3631 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4A4793741E80CFD4002C3631 /* en */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4A47935C1E80CDBF002C3631 /* Debug */ = {

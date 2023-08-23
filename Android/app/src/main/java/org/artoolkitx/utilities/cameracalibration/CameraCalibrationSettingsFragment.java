@@ -3,6 +3,7 @@ package org.artoolkitx.utilities.cameracalibration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CameraCalibrationSettingsFragment extends PreferenceFragmentCompat {
+
+    static final String LOGTAG = "CameraCalibrationSettingsFragment";
     @Override
     @SuppressWarnings("ConstantConditions")
     public void onCreatePreferences(Bundle savedInstanceState, @Nullable String rootKey) {
@@ -84,6 +87,7 @@ public class CameraCalibrationSettingsFragment extends PreferenceFragmentCompat 
         List<String> entriesList = new ArrayList<>();
         List<String> entryValuesList = new ArrayList<>();
         int cameraCount = ARX_jni.arwCreateVideoSourceInfoList("-module=Android");
+        Log.d(LOGTAG, "setCameraInputList: cameraCount=" + cameraCount);
         for (int i = 0; i < cameraCount; i++) {
             String[] name = new String[1];
             String[] model = new String[1];
@@ -91,8 +95,11 @@ public class CameraCalibrationSettingsFragment extends PreferenceFragmentCompat 
             int[] flags = new int[1];
             String[] openToken = new String[1];
             if (ARX_jni.arwGetVideoSourceInfoListEntry(i, name, model, UID, flags, openToken)) {
+                Log.d(LOGTAG, "setCameraInputList: Entry " + i + " name=" + name[0] + ", model='" + model[0] + "', UID='"+ UID[0] + "', flags=0x" + Integer.toHexString(flags[0]) + ", openToken='"+ openToken[0] + "'.");
                 entriesList.add(name[0]);
                 entryValuesList.add(openToken[0]);
+            } else {
+                Log.e(LOGTAG, "setCameraInputList: arwGetVideoSourceInfoListEntry error.\n");
             }
         }
         lp.setEntries(entriesList.toArray(new String[0]));

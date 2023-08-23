@@ -73,7 +73,7 @@
 #include "Eden/EdenGLFont.h"
 
 #include "prefs.hpp"
-
+#include "loc_strings.hpp"
 
 #include "calib_camera.h"
 
@@ -234,7 +234,7 @@ static void startVideo(void)
 #ifdef ANDROID
     if (SDL_AndroidRequestPermission("android.permission.CAMERA") != SDL_TRUE) {
         ARLOGe("Error: Unable to open video source.\n");
-        EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nPress 'p' for settings and help.");
+        EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::VideoOpenErrorTouchscreen));
         return;  
     }
 #endif
@@ -254,7 +254,11 @@ static void startVideo(void)
         vs->configure(buf, true, NULL, NULL, 0);
         if (!vs->open()) {
             ARLOGe("Error: Unable to open video source.\n");
-            EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nPress 'p' for settings and help.");
+#ifdef ANDROID
+            EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::VideoOpenErrorTouchscreen));
+#else
+            EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::VideoOpenError));
+#endif
         }
     }
     gPostVideoSetupDone = false;

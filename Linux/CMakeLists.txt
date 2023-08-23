@@ -124,6 +124,8 @@ set(SOURCE
     ../fileUploader.h
     ../flow.cpp
     ../flow.hpp
+    ../loc_strings.cpp
+    ../loc_strings.hpp
     ../prefs.hpp
     ../prefsLibConfig.cpp
     ../prefsNull.cpp
