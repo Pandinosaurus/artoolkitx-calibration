@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 
 import org.libsdl.app.R;
 import org.libsdl.app.SDLActivity;
@@ -17,13 +16,17 @@ public class CameraCalibrationActivity extends SDLActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //ViewGroup layout = mLayout;
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        findViewById(R.id.btn_cancel).setOnClickListener(view -> {
+            CameraCalibrationActivity.handleBackButton();
+        });
+        findViewById(R.id.btn_add).setOnClickListener(view -> {
+            CameraCalibrationActivity.handleAddButton();
+        });
     }
+
+    public static native void handleBackButton();
+    public static native void handleAddButton();
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -37,10 +40,7 @@ public class CameraCalibrationActivity extends SDLActivity {
             case R.id.menu_print:
                 return true;
             case R.id.menu_settings:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(android.R.id.content, new CameraCalibrationSettingsFragment())
-                        .addToBackStack("Settings")
-                        .commit();
+                startActivity(new Intent(this, CameraCalibrationSettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

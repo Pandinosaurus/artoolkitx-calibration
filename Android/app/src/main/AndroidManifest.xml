@@ -91,6 +91,12 @@
             </intent-filter>
             -->
         </activity>
+        <activity
+            android:name="org.artoolkitx.utilities.cameracalibration.CameraCalibrationSettingsActivity"
+            android:label="@string/settings_activity_name"
+            android:parentActivityName="org.artoolkitx.utilities.cameracalibration.CameraCalibrationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

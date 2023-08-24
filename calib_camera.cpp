@@ -1449,4 +1449,19 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
     free(cachePath);
 }
 
+#ifdef ANDROID
+#include <jni.h>
+#define JNIFUNCTION_CC(sig) Java_org_artoolkitx_utilities_cameracalibration_CameraCalibrationActivity_##sig
+
+extern "C" JNIEXPORT void JNICALL JNIFUNCTION_CC(handleBackButton(void))
+{
+    flowHandleEvent(EVENT_BACK_BUTTON);
+}
+
+extern "C" JNIEXPORT void JNICALL JNIFUNCTION_CC(handleAddButton(void))
+{
+    flowHandleEvent(EVENT_TOUCH);
+}
+
+#endif
 
