@@ -25,15 +25,12 @@ public class CameraCalibrationActivity extends SDLActivity {
         super.onCreate(savedInstanceState);
 
         findViewById(R.id.btn_cancel).setOnClickListener(view -> {
-            CameraCalibrationActivity.handleBackButton();
+            CameraCalibrationJNI.handleBackButton();
         });
         findViewById(R.id.btn_add).setOnClickListener(view -> {
-            CameraCalibrationActivity.handleAddButton();
+            CameraCalibrationJNI.handleAddButton();
         });
     }
-
-    public static native void handleBackButton();
-    public static native void handleAddButton();
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -49,7 +46,7 @@ public class CameraCalibrationActivity extends SDLActivity {
                 try
                 {
                     PrintDocumentAdapter printAdapter = null;
-                    if (getSharedPreferences("cameracalibrationsettings", MODE_PRIVATE).getString("print_paper_size", "a4") == "usletter") {
+                    if (getSharedPreferences( getPackageName() + "_preferences", MODE_PRIVATE).getString("print_paper_size", "a4").equals("usletter")) {
                         printAdapter = new PdfDocumentAdapter(this, R.raw.printusletter, "Calibration chessboard (US Letter)", 1);
                     } else {
                         // Assume A4.
