@@ -310,6 +310,6 @@ float getPreferencesCalibrationPatternSpacing(void *preferences)
 
 char *getPreferenceCalibSaveDir(void *preferences)
 {
-    return arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_USER_ROOT, NULL);
+    return arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_EXTERNAL_DATA_DIR, NULL);
 }
 #endif

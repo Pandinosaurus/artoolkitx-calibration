@@ -645,6 +645,11 @@ int main(int argc, char *argv[])
                         if (ar2VideoGetParami(vid, AR_VIDEO_PARAM_AVFOUNDATION_CAMERA_POSITION, &frontCamera) >= 0) {
                             gCameraIsFrontFacing = (frontCamera == AR_VIDEO_AVFOUNDATION_CAMERA_POSITION_FRONT);
                         }
+                    } else if (vid->module == AR_VIDEO_MODULE_ANDROID) {
+                        int frontCamera;
+                        if (ar2VideoGetParami(vid, AR_VIDEO_PARAM_ANDROID_CAMERA_FACE, &frontCamera) >= 0) {
+                            gCameraIsFrontFacing = (frontCamera == AR_VIDEO_ANDROID_CAMERA_FACE_FRONT);
+                        }
                     }
                     bool contentRotate90, contentFlipV, contentFlipH;
                     if (gDisplayOrientation == 1) { // Landscape with top of device at left.
@@ -1238,30 +1243,23 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         
         AR2VideoParamT *vid = vs->getAR2VideoParam();
         if (ar2VideoGetParams(vid, AR_VIDEO_PARAM_DEVICEID, &device_id) < 0 || !device_id) {
-            ARLOGe("Error fetching camera device identification.\n");
+            ARLOGe("Video input module does not support fetching device identification.\n");
         }
         if (ar2VideoGetParams(vid, AR_VIDEO_PARAM_NAME, &name) < 0 || !name) {
-            ARLOGe("Error fetching camera name.\n");
+            ARLOGi("Video input module does not support fetching input name.\n");
+        }
+        if (!device_id && !name) {
+            ARLOGw("Neither video input device identification nor name available.\n");
         }
         
-        if (vid->module == AR_VIDEO_MODULE_AVFOUNDATION) {
-            int focalPreset;
-            ar2VideoGetParami(vid, AR_VIDEO_PARAM_AVFOUNDATION_FOCUS_PRESET, &focalPreset);
-            switch (focalPreset) {
-                case AR_VIDEO_AVFOUNDATION_FOCUS_MACRO:
-                    focal_length = strdup("0.01");
-                    break;
-                case AR_VIDEO_AVFOUNDATION_FOCUS_0_3M:
-                    focal_length = strdup("0.3");
-                    break;
-                case AR_VIDEO_AVFOUNDATION_FOCUS_1_0M:
-                    focal_length = strdup("1.0");
-                    break;
-                case AR_VIDEO_AVFOUNDATION_FOCUS_INF:
-                    focal_length = strdup("1000000.0");
-                    break;
-                default:
-                    break;
+        double f;
+        if (ar2VideoGetParamd(vid, AR_VIDEO_PARAM_CAMERA_FOCAL_LENGTH, &f) < 0) {
+            ARLOGi("Video input module does not support fetching focal length.\n");
+        } else {
+            if (f > 0.0) {
+                if (asprintf(&focal_length, "%.3f", f) < 0) {
+                    ARLOGe("Error writing focal length.\n");
+                }
             }
         }
         if (!focal_length) {
@@ -1270,7 +1268,11 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         }
         
         if (gCalibrationSave) {
-            
+#ifdef ANDROID
+            if (SDL_AndroidRequestPermission("android.permission.WRITE_EXTERNAL_STORAGE") != SDL_TRUE) {
+                ARLOGe("Error: Unable to write to external storage.\n");
+            } else {
+#endif
             // Assemble the filename.
             char calibrationSavePathname[SAVEPARAM_PATHNAME_LEN];
             snprintf(calibrationSavePathname, SAVEPARAM_PATHNAME_LEN, "%s/camera_para-", gCalibrationSaveDir);
@@ -1297,6 +1299,10 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
             } else {
                 ARLOGi("Saved calibration to '%s'.\n", calibrationSavePathname);
             }
+#ifdef ANDROID
+            }
+#endif
+            
         }
 
         // Check for early exit.
@@ -1448,31 +1454,3 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
     }
     free(cachePath);
 }
-
-#ifdef ANDROID
-#include <jni.h>
-#define JNIFUNCTION_CC(sig) Java_org_artoolkitx_utilities_cameracalibration_CameraCalibrationJNI_##sig
-
-extern "C" JNIEXPORT void JNICALL JNIFUNCTION_CC(handleBackButton(void))
-{
-    flowHandleEvent(EVENT_BACK_BUTTON);
-}
-
-extern "C" JNIEXPORT void JNICALL JNIFUNCTION_CC(handleAddButton(void))
-{
-    flowHandleEvent(EVENT_TOUCH);
-}
-
-extern "C" JNIEXPORT void JNICALL JNIFUNCTION_CC(sendPreferencesChangedEvent(void))
-{
-    SDL_Event event;
-    SDL_zero(event);
-    event.type = gSDLEventPreferencesChanged;
-    event.user.code = (Sint32)0;
-    event.user.data1 = NULL;
-    event.user.data2 = NULL;
-    SDL_PushEvent(&event);
-}
-
-#endif
-
