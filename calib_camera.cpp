@@ -644,11 +644,13 @@ int main(int argc, char *argv[])
                         int frontCamera;
                         if (ar2VideoGetParami(vid, AR_VIDEO_PARAM_AVFOUNDATION_CAMERA_POSITION, &frontCamera) >= 0) {
                             gCameraIsFrontFacing = (frontCamera == AR_VIDEO_AVFOUNDATION_CAMERA_POSITION_FRONT);
+                            ARLOGi("Camera is %sfront-facing.\n", gCameraIsFrontFacing ? "" : "not ");
                         }
                     } else if (vid->module == AR_VIDEO_MODULE_ANDROID) {
                         int frontCamera;
                         if (ar2VideoGetParami(vid, AR_VIDEO_PARAM_ANDROID_CAMERA_FACE, &frontCamera) >= 0) {
                             gCameraIsFrontFacing = (frontCamera == AR_VIDEO_ANDROID_CAMERA_FACE_FRONT);
+                            ARLOGi("Camera is %sfront-facing.\n", gCameraIsFrontFacing ? "" : "not ");
                         }
                     }
                     bool contentRotate90, contentFlipV, contentFlipH;
@@ -666,8 +668,8 @@ int main(int argc, char *argv[])
                         contentFlipH = (!gCameraIsFrontFacing);
                     } else /*(gDisplayOrientation == 0)*/ { // Portait
                         contentRotate90 = true;
-                        contentFlipV = gCameraIsFrontFacing;
-                        contentFlipH = false;
+                        contentFlipV = false;
+                        contentFlipH = gCameraIsFrontFacing;
                     }
                     
                     // Setup a route for rendering the colour background image.
