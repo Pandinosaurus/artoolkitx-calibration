@@ -8,8 +8,9 @@ android {
         applicationId "org.artoolkitx.utilities.calibcameraandroid"
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        compileSdkVersion 33
+        versionCode 1010000
+        versionName "1.1"
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_APP_PLATFORM=android-24", "-DANDROID_STL=c++_shared"

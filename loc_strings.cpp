@@ -43,7 +43,7 @@ const std::unordered_map<const loc_string, const char*> loc_strings[] =
 {
     // en
     {
-        {loc_string::Reintro, "Press 'space' to begin a calibration run.\n\nPress 'p' for settings and help."},
+        {loc_string::Intro, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nPress 'space' to begin a calibration run.\n\nPress 'p' for settings and help."},
         {loc_string::VideoOpenError, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nPress 'p' for settings and help."},
         {loc_string::Reintro, "Press 'space' to begin a calibration run.\n\nPress 'p' for settings and help."},
         {loc_string::IntroTouchscreen, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nTap '+' to begin a calibration run.\n\nTap the menu button for settings and help."},

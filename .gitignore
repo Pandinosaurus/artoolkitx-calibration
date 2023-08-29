@@ -54,6 +54,8 @@ depends/ios/Frameworks/opencv2.framework
 depends/macos/Frameworks/ARX.framework/
 depends/macos/Frameworks/opencv2.framework
 depends/android/artoolkitx
+artoolkitX.for.iOS.v*.dmg
+artoolkitX.for.macOS.v*.dmg
 
 # Build files
 Linux/build/
