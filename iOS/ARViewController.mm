@@ -768,7 +768,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         
         if (!gPostVideoSetupDone) {
             
-            [ARViewController displayToastWithMessage:[NSString stringWithFormat:@"Camera: %dx%d", vs->getVideoWidth(), vs->getVideoHeight()]];
+            [ARViewController displayToastWithMessage:[NSString stringWithFormat:@"Camera: %dx%d", vs->getVideoWidth(), vs->getVideoHeight()] durationSeconds:5.0f];
             
             gCameraIsFrontFacing = false;
             AR2VideoParamT *vid = vs->getAR2VideoParam();
@@ -1382,7 +1382,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
     
 }
 
-+ (void)displayToastWithMessage:(NSString *)toastMessage
++ (void)displayToastWithMessage:(NSString *)toastMessage durationSeconds:(float)durationSeconds
 {
     [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
         UIWindow * keyWindow = [[UIApplication sharedApplication] keyWindow];
@@ -1400,7 +1400,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         
         [keyWindow addSubview:toastView];
         
-        [UIView animateWithDuration: 3.0f
+        [UIView animateWithDuration: durationSeconds
                               delay: 0.0
                             options: UIViewAnimationOptionCurveEaseOut
                          animations: ^{
@@ -1411,6 +1411,10 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
                          }
          ];
     }];
+}
+
++ (void)displayToastWithMessage:(NSString *)toastMessage {
+    [ARViewController displayToastWithMessage:toastMessage durationSeconds:3.5f];
 }
 
 @end

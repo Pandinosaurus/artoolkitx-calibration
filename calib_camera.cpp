@@ -636,7 +636,16 @@ int main(int argc, char *argv[])
                 }
 #endif
                 if (!gPostVideoSetupDone) {
-                    
+#ifdef ANDROID
+                    char *toast;
+                    if (asprintf(&toast, "Camera: %dx%d", vs->getVideoWidth(), vs->getVideoHeight()) < 0) {
+                        ARLOGe("asprintf");
+                    } else {
+                        SDL_AndroidShowToast(toast, 1, -1, 0, 0); // int duration = 1 = long, int gravity = -1 = don't care, int xoffset, int yoffset
+                        free(toast);
+                    }
+#endif
+
                     gCameraIsFrontFacing = false;
                     AR2VideoParamT *vid = vs->getAR2VideoParam();
                     
