@@ -1,5 +1,5 @@
 /*
- *  version.h
+ *  loc_strings.cpp
  *  artoolkitX
  *
  *  This file is part of artoolkitX.
@@ -28,23 +28,32 @@
  *  are not obligated to do so. If you do not wish to do so, delete this exception
  *  statement from your version.
  *
- *  Copyright 2018 Realmax, Inc.
- *  Copyright 2017-2017 Daqri LLC. All Rights Reserved.
+ *  Copyright 2023 Philip Lamb.
  *
  *  Author(s): Philip Lamb
  *
  */
 
-#ifndef version_h
-#define version_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "loc_strings.hpp"
 
-#define VERSION_STRING "1.1"
+lang_t loc = lang_en;
 
-#ifdef __cplusplus
-}
-#endif
-#endif /* version_h */
+const std::unordered_map<const loc_string, const char*> loc_strings[] =
+{
+    // en
+    {
+        {loc_string::Intro, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nPress 'space' to begin a calibration run.\n\nPress 'p' for settings and help."},
+        {loc_string::VideoOpenError, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nPress 'p' for settings and help."},
+        {loc_string::Reintro, "Press 'space' to begin a calibration run.\n\nPress 'p' for settings and help."},
+        {loc_string::IntroTouchscreen, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nTap '+' to begin a calibration run.\n\nTap the menu button for settings and help."},
+        {loc_string::VideoOpenErrorTouchscreen, "Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nUnable to open video source.\n\nTap the menu button for settings and help."},
+        {loc_string::ReintroTouchscreen, "Tap '+' to begin a calibration run.\n\nTap the menu button for settings and help."},
+        {loc_string::CalibCapturing, "Capturing image %d/%d"},
+        {loc_string::CalibCanceled, "Calibration canceled"},
+        {loc_string::CalibCalculating, "Calculating camera parameters..."},
+        {loc_string::CalibResults,  "Camera parameters calculated (error min=%.3f, avg=%.3f, max=%.3f)"}
+    }
+};
+    
+

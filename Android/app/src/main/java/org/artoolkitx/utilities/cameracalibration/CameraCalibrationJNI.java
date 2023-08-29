@@ -1,5 +1,5 @@
 /*
- *  version.h
+ *  CameraCalibrationJNI.java
  *  artoolkitX
  *
  *  This file is part of artoolkitX.
@@ -28,23 +28,23 @@
  *  are not obligated to do so. If you do not wish to do so, delete this exception
  *  statement from your version.
  *
- *  Copyright 2018 Realmax, Inc.
- *  Copyright 2017-2017 Daqri LLC. All Rights Reserved.
+ *  Copyright 2023 Philip Lamb.
  *
  *  Author(s): Philip Lamb
  *
  */
 
-#ifndef version_h
-#define version_h
+//
+// Prototypes for a handful of entry points to allow the Java code to call into the
+// native side.
+// The native side of this interface is in the file camera_calibration_jni.cpp.
+//
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+package org.artoolkitx.utilities.cameracalibration;
 
-#define VERSION_STRING "1.1"
+public class CameraCalibrationJNI {
 
-#ifdef __cplusplus
+    public static native void handleBackButton();
+    public static native void handleAddButton();
+    public static native void sendPreferencesChangedEvent();
 }
-#endif
-#endif /* version_h */

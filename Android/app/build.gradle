@@ -8,8 +8,9 @@ android {
         applicationId "org.artoolkitx.utilities.calibcameraandroid"
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        compileSdkVersion 33
+        versionCode 1010000
+        versionName "1.1"
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_APP_PLATFORM=android-24", "-DANDROID_STL=c++_shared"
@@ -46,4 +47,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    def appcompat_version = "1.6.1"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    def preference_version = "1.2.1"
+    implementation "androidx.preference:preference:$preference_version"
+    def constraintlayout_version = "2.1.4"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
 }

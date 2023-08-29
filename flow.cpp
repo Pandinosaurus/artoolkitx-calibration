@@ -47,6 +47,7 @@
 #include <Eden/EdenMessage.h>
 #include <ARX/AR/ar.h>
 #include <ARX/ARUtil/time.h>
+#include "loc_strings.hpp"
 
 //
 // Globals.
@@ -240,9 +241,17 @@ static void *flowThread(void *arg)
 	while (!gStop) {
 
 		if (flowStateGet() == FLOW_STATE_WELCOME) {
-			EdenMessageShow((const unsigned char *)"Welcome to artoolkitX Camera Calibrator\n(c)2023 artoolkitX Contributors.\n\nPress 'space' to begin a calibration run.\n\nPress 'p' for settings and help.");
+#if ARX_TARGET_PLATFORM_IOS || ARX_TARGET_PLATFORM_ANDROID
+			EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::IntroTouchscreen));
+#else
+			EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::Intro));
+#endif
 		} else {
-			EdenMessageShow((const unsigned char *)"Press 'space' to begin a calibration run.\n\nPress 'p' for settings and help.");
+#if ARX_TARGET_PLATFORM_IOS || ARX_TARGET_PLATFORM_ANDROID
+			EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::ReintroTouchscreen));
+#else
+			EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::Reintro));
+#endif
 		}
 		flowSetEventMask((EVENT_t)(EVENT_TOUCH | EVENT_MODAL));
 		event = flowWaitForEvent();
@@ -262,7 +271,7 @@ static void *flowThread(void *arg)
 		flowSetEventMask((EVENT_t)(EVENT_TOUCH|EVENT_BACK_BUTTON));
 
 		do {
-			snprintf((char *)statusBarMessage, STATUS_BAR_MESSAGE_BUFFER_LEN, "Capturing image %d/%d", gFlowCalib->calibImageCount() + 1, gFlowCalib->calibImageCountMax());
+			snprintf((char *)statusBarMessage, STATUS_BAR_MESSAGE_BUFFER_LEN, LOC_STRING(loc_string::CalibCapturing), gFlowCalib->calibImageCount() + 1, gFlowCalib->calibImageCountMax());
 			event = flowWaitForEvent();
 			if (gStop) break;
 			if (event == EVENT_TOUCH) {
@@ -291,7 +300,7 @@ static void *flowThread(void *arg)
 
 			flowSetEventMask(EVENT_TOUCH);
             flowStateSet(FLOW_STATE_DONE);
-			EdenMessageShow((const unsigned char *)"Calibration canceled");
+			EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::CalibCanceled));
 			flowWaitForEvent();
 			if (gStop) break;
 			EdenMessageHide();
@@ -302,7 +311,7 @@ static void *flowThread(void *arg)
 
 			flowSetEventMask(EVENT_NONE);
 			flowStateSet(FLOW_STATE_CALIBRATING);
-			EdenMessageShow((const unsigned char *)"Calculating camera parameters...");
+			EdenMessageShow((const unsigned char *)LOC_STRING(loc_string::CalibCalculating));
 			gFlowCalib->calib(&param, &err_min, &err_avg, &err_max);
     		EdenMessageHide();
 
@@ -313,7 +322,7 @@ static void *flowThread(void *arg)
 			flowSetEventMask(EVENT_TOUCH);
 			flowStateSet(FLOW_STATE_DONE);
 			unsigned char *buf;
-			asprintf((char **)&buf, "Camera parameters calculated (error min=%.3f, avg=%.3f, max=%.3f)", err_min, err_avg, err_max);
+			asprintf((char **)&buf, LOC_STRING(loc_string::CalibResults), err_min, err_avg, err_max);
 			EdenMessageShow(buf);
 			free(buf);
 			flowWaitForEvent();

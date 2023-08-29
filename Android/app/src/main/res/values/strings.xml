@@ -1,3 +1,65 @@
 <resources>
-    <string name="app_name">artoolkitX Camera Calibrator</string>
+    <string name="app_name">Camera Calibration</string>
+    <string name="settings_activity_name">Camera Calibration Settings</string>
+    <string-array name="cameras">
+        <item>Default</item>
+    </string-array>
+    <string-array name="cameras_values">
+        <item></item>
+    </string-array>
+    <string-array name="camera_positions">
+        <item>Back</item>
+        <item>Front</item>
+        <item>External</item>
+    </string-array>
+    <string-array name="camera_positions_values">
+        <item>rear</item>
+        <item>front</item>
+        <item>external</item>
+    </string-array>
+    <string name="camera_position_default_value">rear</string>
+    <string-array name="camera_size_strategies">
+        <item>Any size</item>
+        <item>Exact size</item>
+        <item>Closest size (with same aspect ratio)</item>
+        <item>Closest size (by pixel count)</item>
+        <item>Size with aspect ratio</item>
+        <item>Largest size with maximum</item>
+        <item>Smallest size with minimum</item>
+        <item>Largest size</item>
+        <item>Smallest size</item>
+    </string-array>
+    <string-array name="camera_size_strategies_values">
+        <item>any</item>
+        <item>exact</item>
+        <item>closestsameaspect</item>
+        <item>closestpixelcount</item>
+        <item>sameaspect</item>
+        <item>largestwithmaximum</item>
+        <item>smallestwithminimum</item>
+        <item>largest</item>
+        <item>smallest</item>
+    </string-array>
+    <string name="camera_size_strategy_default_value">closestpixelcount</string>
+    <string name="camera_width_default_value">640</string>
+    <string name="camera_height_default_value">480</string>
+    <string-array name="print_paper_sizes">
+        <item>A4</item>
+        <item>US Letter</item>
+    </string-array>
+    <string-array name="print_paper_sizes_values">
+        <item>a4</item>
+        <item>usletter</item>
+    </string-array>
+    <string name="print_paper_size_default_value">a4</string>
+    <string-array name="calibration_patterns">
+        <item>Chessboard</item>
+        <item>Circles</item>
+        <item>Asymmetric circles</item>
+    </string-array>
+    <string-array name="calibration_patterns_values">
+        <item>chessboard</item>
+        <item>circles</item>
+        <item>asymmetriccircles</item>
+    </string-array>
 </resources>

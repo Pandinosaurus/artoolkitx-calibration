@@ -65,6 +65,7 @@
 
 
 #include "prefs.hpp"
+#include "loc_strings.hpp"
 
 //#import "draw.h"
 
@@ -468,7 +469,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         vs->configure(buf, true, NULL, NULL, 0);
         if (!vs->open()) {
             ARLOGe("Error: Unable to open video source.\n");
-            EdenMessageShow(((const unsigned char *)NSLocalizedString(@"VideoOpenError",@"Welcome message when unable to open video source").UTF8String));
+            EdenMessageShow(((const unsigned char *)LOC_STRING(loc_string::VideoOpenErrorTouchscreen)));
         }
     }
     gPostVideoSetupDone = false;

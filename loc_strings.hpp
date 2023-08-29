@@ -1,5 +1,5 @@
 /*
- *  version.h
+ *  loc_strings.hpp
  *  artoolkitX
  *
  *  This file is part of artoolkitX.
@@ -28,23 +28,42 @@
  *  are not obligated to do so. If you do not wish to do so, delete this exception
  *  statement from your version.
  *
- *  Copyright 2018 Realmax, Inc.
- *  Copyright 2017-2017 Daqri LLC. All Rights Reserved.
+ *  Copyright 2023 Philip Lamb
  *
  *  Author(s): Philip Lamb
  *
  */
 
-#ifndef version_h
-#define version_h
+#pragma once
+#include <unordered_map>
 
-#ifdef __cplusplus
-extern "C" {
+enum lang_t {
+    lang_en = 0
+};
+
+enum class loc_string {
+    Intro,
+    VideoOpenError,
+    Reintro,
+    IntroTouchscreen,
+    VideoOpenErrorTouchscreen,
+    ReintroTouchscreen,
+    CalibCapturing,
+    CalibCanceled,
+    CalibCalculating,
+    CalibResults,
+};
+
+extern lang_t loc;
+extern const std::unordered_map<const loc_string, const char*> loc_strings[];
+
+// Return a localized string n in the current language.
+// Throws std::out_of_range exception if the string is not defined for the current language.
+#define LOC_STRING(n) (loc_strings[loc].at(n))
+
+#if (__cplusplus >= 201703L)
+// Return a localized string n in the current language.
+// If not defined for this language, falls back to the string in English.
+// Throws std::out_of_range exception if the string is not defined for English.
+#define LOC_STRING0(n) ((auto s = loc_strings[loc].find(n); s != loc_strings[loc].end()) ? s->second : loc_strings[0].at(n))
 #endif
-
-#define VERSION_STRING "1.1"
-
-#ifdef __cplusplus
-}
-#endif
-#endif /* version_h */

@@ -1,5 +1,5 @@
 /*
- *  version.h
+ *  calib_camera_jni.cpp
  *  artoolkitX
  *
  *  This file is part of artoolkitX.
@@ -28,23 +28,51 @@
  *  are not obligated to do so. If you do not wish to do so, delete this exception
  *  statement from your version.
  *
- *  Copyright 2018 Realmax, Inc.
- *  Copyright 2017-2017 Daqri LLC. All Rights Reserved.
+ *  Copyright 2023 Philip Lamb.
  *
  *  Author(s): Philip Lamb
  *
  */
 
-#ifndef version_h
-#define version_h
+//
+// Presents a handful of entry points to allow the Java code to call into the
+// native side.
+// The Java side of this interface is in the class
+// org.artoolkitx.utilities.cameracalibration.CameraCalibrationJNI.
+//
 
-#ifdef __cplusplus
+#ifdef ANDROID
+
+#include "flow.hpp"
+#include "calib_camera.h"
+
+#include <jni.h>
+
+#define JNIFUNCTION_CC(sig) Java_org_artoolkitx_utilities_cameracalibration_CameraCalibrationJNI_##sig
+
 extern "C" {
-#endif
 
-#define VERSION_STRING "1.1"
+JNIEXPORT void JNICALL JNIFUNCTION_CC(handleBackButton(void))
+{
+    flowHandleEvent(EVENT_BACK_BUTTON);
+}
 
-#ifdef __cplusplus
+JNIEXPORT void JNICALL JNIFUNCTION_CC(handleAddButton(void))
+{
+    flowHandleEvent(EVENT_TOUCH);
+}
+
+JNIEXPORT void JNICALL JNIFUNCTION_CC(sendPreferencesChangedEvent(void))
+{
+    SDL_Event event;
+    SDL_zero(event);
+    event.type = gSDLEventPreferencesChanged;
+    event.user.code = (Sint32)0;
+    event.user.data1 = NULL;
+    event.user.data2 = NULL;
+    SDL_PushEvent(&event);
+}
+
 }
 #endif
-#endif /* version_h */
+

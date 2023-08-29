@@ -19,16 +19,22 @@ set -x
 # Get our location.
 OURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-SDK_VERSION='1.1.12'
-# If the version number includes a dev build number, drop it.
-SDK_VERSION_CANON=`echo -n "${SDK_VERSION}" | sed -E -e 's/([0-9]+\.[0-9]+\.[0-9]+)(\.[0-9])?/\1/'`
-# If the tiny version number is 0, drop it.
-SDK_VERSION_PRETTY=`echo -n "${SDK_VERSION_CANON}" | sed -E -e 's/([0-9]+\.[0-9]+)\.0/\1/'`
-SDK_URL_DIR="https://github.com/artoolkitx/artoolkitx/releases/download/${SDK_VERSION}/"
 
 VERSION=`sed -En -e 's/.*VERSION_STRING[[:space:]]+"([0-9]+\.[0-9]+(\.[0-9]+)*)".*/\1/p' ${OURDIR}/version.h`
 # If the tiny version number is 0, drop it.
 VERSION=`echo -n "${VERSION}" | sed -E -e 's/([0-9]+\.[0-9]+)\.0/\1/'`
+# Process for version number parts.
+VERSION_MAJOR=$(echo ${VERSION} | sed -E -e 's/^([0-9]+).*/\1/')
+VERSION_MINOR=$(echo ${VERSION} | sed -E -e 's/^[0-9]+\.([0-9]+).*/\1/')
+# VERSION_TINY and its preceding dot can be absent, so allow for that in our regexp and set to 0 in that case.
+VERSION_TINY=$(echo ${VERSION} | sed -E -e 's/^[0-9]+\.[0-9]+\.*([0-9]+)*.*/\1/')
+VERSION_TINY=${VERSION_TINY:-0}
+# VERSION_BUILD can be overridden in the environment, but defaults to 0.
+VERSION_BUILD=${VERSION_BUILD:-0}
+# Convert version to an integer (e.g. for use in incremental build numbering, as on Android).
+VERSION_INT=$(printf "%d%02d%02d%02d" ${VERSION_MAJOR} ${VERSION_MINOR} ${VERSION_TINY} ${VERSION_BUILD})
+
+echo "Build version ${VERSION_INT}"
 
 function usage {
     echo "Usage: $(basename $0) [--debug] (macos | ios | windows | linux | linux-raspbian) "
@@ -100,6 +106,15 @@ else
     CPUS=1
 fi
 
+ARTOOLKITX_VERSION=$(cat ${OURDIR}/artoolkitx-version.txt | tr -d '[:space:]')
+
+# Set default CMake generator for Windows.
+echo "$CMAKE_GENERATOR"
+if [ $OS = "Windows" ]  && test -z "$CMAKE_GENERATOR"; then
+    CMAKE_GENERATOR="Visual Studio 16 2019"
+    CMAKE_ARCH="x64"
+fi
+
 # Function to allow check for required packages.
 function check_package {
 	# Variant for distros that use debian packaging.
@@ -115,21 +130,11 @@ function check_package {
 	fi
 }
 
-function rawurlencode() {
-    local string="${1}"
-    local strlen=${#string}
-    local encoded=""
-    local pos c o
-
-    for (( pos=0 ; pos<strlen ; pos++ )); do
-        c=${string:$pos:1}
-        case "$c" in
-            [-_.~a-zA-Z0-9] ) o="${c}" ;;
-            * )               printf -v o '%%%02x' "'$c"
-        esac
-        encoded+="${o}"
-    done
-    echo -n "${encoded}"
+find_or_fetch_artoolkitx() {
+    if [ ! -f "${1}" ] ; then
+        echo "Downloading ${1}..."
+        curl --location "https://github.com/artoolkitx/artoolkitx/releases/download/${ARTOOLKITX_VERSION}/${1}" -O
+    fi
 }
 
 if [ "$OS" = "Darwin" ] ; then
@@ -140,16 +145,18 @@ if [ "$OS" = "Darwin" ] ; then
 # macOS
 if [ $BUILD_MACOS ] ; then
     
+    cd "${OURDIR}"
     # Fetch the ARX.framework from latest build into a location where Xcode will find it.
-    SDK_FILENAME="artoolkitX.for.macOS.v${SDK_VERSION_PRETTY}.dmg"
-    if [ ! -f "${SDK_FILENAME}" ] ; then
-        curl -f -o "${SDK_FILENAME}" --location "${SDK_URL_DIR}$(rawurlencode "${SDK_FILENAME}")"
-    fi
-    hdiutil attach "${SDK_FILENAME}" -noautoopen -quiet -mountpoint "SDK"
+    MOUNTPOINT=mnt$$
+    IMAGE="artoolkitX.for.macOS.v${ARTOOLKITX_VERSION}.dmg"
+    find_or_fetch_artoolkitx "${IMAGE}"
+    mkdir -p "${MOUNTPOINT}"
+    hdiutil attach "${IMAGE}" -noautoopen -quiet -mountpoint "${MOUNTPOINT}"
     rm -rf depends/macOS/Frameworks/ARX.framework
-    cp -af SDK/artoolkitX/SDK/Frameworks/ARX.framework depends/macOS/Frameworks
-    hdiutil detach "SDK" -quiet -force
-    
+    ditto "${MOUNTPOINT}/artoolkitX/SDK/Frameworks/ARX.framework" depends/macOS/Frameworks/ARX.framework
+    hdiutil detach "${MOUNTPOINT}" -quiet -force
+    rmdir "${MOUNTPOINT}"
+
     # Make the version number available to Xcode.
     cp macOS/user-config-in.xcconfig macOS/user-config.xcconfig
     sed -E -i "" -e "s/@VERSION@/${VERSION}/" macOS/user-config.xcconfig
@@ -163,17 +170,19 @@ fi
 # iOS
 if [ $BUILD_IOS ] ; then
     
+    cd "${OURDIR}"
     # Fetch libARX from latest build into a location where Xcode will find it.
-    SDK_FILENAME="artoolkitX.for.iOS.v${SDK_VERSION_PRETTY}.dmg"
-    if [ ! -f "${SDK_FILENAME}" ] ; then
-        curl -f -o "${SDK_FILENAME}" --location "${SDK_URL_DIR}$(rawurlencode "${SDK_FILENAME}")"
-    fi
-    hdiutil attach "${SDK_FILENAME}" -noautoopen -quiet -mountpoint "SDK"
+    MOUNTPOINT=mnt$$
+    IMAGE="artoolkitX.for.iOS.v${ARTOOLKITX_VERSION}.dmg"
+    find_or_fetch_artoolkitx "${IMAGE}"
+    mkdir -p "${MOUNTPOINT}"
+    hdiutil attach "${IMAGE}" -noautoopen -quiet -mountpoint "${MOUNTPOINT}"
     rm -rf depends/iOS/include/ARX/
-    cp -af SDK/artoolkitX/SDK/include/ARX depends/iOS/include
+    cp -af "${MOUNTPOINT}/artoolkitX/SDK/include/ARX" depends/iOS/include
     rm -f depends/iOS/lib/libARX.a
-    cp -af SDK/artoolkitX/SDK/lib/libARX.a depends/iOS/lib
-    hdiutil detach "SDK" -quiet -force
+    cp -af "${MOUNTPOINT}/artoolkitX/SDK/lib/libARX.a" depends/iOS/lib
+    hdiutil detach "${MOUNTPOINT}" -quiet -force
+    rmdir "${MOUNTPOINT}"
     
     # Make the version number available to Xcode.
     cp iOS/user-config-in.xcconfig iOS/user-config.xcconfig
@@ -187,15 +196,18 @@ fi
 
 if [ $BUILD_ANDROID ] ; then
     
+    cd "${OURDIR}"
     # If artoolkitx folder is not a symlink, fetch artoolkitx from latest build into a location where the build can find it.
     if [[ ! -L "${OURDIR}/depends/android/artoolkitx" ]] ; then
-        SDK_FILENAME="artoolkitx-${SDK_VERSION_PRETTY}-Android.zip"
-        if [ ! -f "${OURDIR}/${SDK_FILENAME}" ] ; then
-            curl -f -o "${OURDIR}/${SDK_FILENAME}" --location "${SDK_URL_DIR}$(rawurlencode "${SDK_FILENAME}")"
-        fi
+        IMAGE="artoolkitx-${ARTOOLKITX_VERSION}-Android.zip"
+        find_or_fetch_artoolkitx "${IMAGE}"
         rm -rf "${OURDIR}/depends/android/artoolkitx"
         unzip "${OURDIR}/${SDK_FILENAME}" -d "${OURDIR}/depends/android/artoolkitx"
     fi
+    
+    # Make the version number available to Gradle.
+    sed -E -i "" -e "s/versionCode [0-9]+/versionCode ${VERSION_INT}/" -e "s/versionName \"[0-9\.]+\"/versionName \"${VERSION}\"/" Android/app/build.gradle
+
     (cd "${OURDIR}/Android"
     echo "Building Android project"
     ./gradlew assembleRelease
@@ -258,17 +270,22 @@ if [ "$OS" = "Windows" ] ; then
 # Windows
 if [ $BUILD_WINDOWS ] ; then
 
+    cd "${OURDIR}"
+    MOUNTPOINT=mnt$$
+    IMAGE="artoolkitX-${ARTOOLKITX_VERSION}-Windows.zip"
+    find_or_fetch_artoolkitx "${IMAGE}"
+    unzip -q -o "${IMAGE}" -d "${MOUNTPOINT}"
+    # TODO COPY FROM "${MOUNTPOINT}/artoolkitX"
+    rm -rf "${MOUNTPOINT}"
+
     if [ ! -d "build-windows" ] ; then
         mkdir build-windows
     fi
 
-    SDK_FILENAME="artoolkitX.for.Windows.v${SDK_VERSION_PRETTY}.zip"
-    curl -f -o "${SDK_FILENAME}" --location "${SDK_URL_DIR}$(rawurlencode "${SDK_FILENAME}")"
-
     (cd Windows
     mkdir -p build
     cd build
-    cmake.exe .. -DCMAKE_CONFIGURATION_TYPES=${DEBUG+Debug}${DEBUG-Release} "-GVisual Studio 15 2017 Win64"  -D"VERSION=${VERSION}"
+    cmake.exe .. -DCMAKE_CONFIGURATION_TYPES=${DEBUG+Debug}${DEBUG-Release} -G "$CMAKE_GENERATOR" ${CMAKE_ARCH+-A ${CMAKE_ARCH}} -D"VERSION=${VERSION}"
     cmake.exe --build . --config ${DEBUG+Debug}${DEBUG-Release}  --target install
     )
 fi

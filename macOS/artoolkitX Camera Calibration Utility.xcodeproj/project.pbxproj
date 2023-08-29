@@ -13,6 +13,7 @@
 		4A0E11801E8CAA830074C280 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0E117F1E8CAA830074C280 /* CoreFoundation.framework */; };
 		4A0E11821E8CAA940074C280 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0E11811E8CAA940074C280 /* AppKit.framework */; };
 		4A0EBFD11EC3EA9500B0D585 /* prefDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4A0EBFD01EC3EA9500B0D585 /* prefDefaults.plist */; };
+		4A17ED992A95956F009FAA72 /* loc_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A17ED972A95956F009FAA72 /* loc_strings.cpp */; };
 		4A47933D1E7F676E002C3631 /* Calibration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A47933B1E7F676E002C3631 /* Calibration.cpp */; };
 		4A5FA0B41DFE138D00795630 /* readtex.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A5FA0B31DFE138D00795630 /* readtex.c */; };
 		4A5FA0B71DFE13B300795630 /* EdenMessage.c in Sources */ = {isa = PBXBuildFile; fileRef = 4A5FA0B61DFE13B300795630 /* EdenMessage.c */; };
@@ -89,6 +90,8 @@
 		4A0E117F1E8CAA830074C280 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		4A0E11811E8CAA940074C280 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		4A0EBFD01EC3EA9500B0D585 /* prefDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = prefDefaults.plist; sourceTree = "<group>"; };
+		4A17ED972A95956F009FAA72 /* loc_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = loc_strings.cpp; path = ../loc_strings.cpp; sourceTree = "<group>"; };
+		4A17ED982A95956F009FAA72 /* loc_strings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = loc_strings.hpp; path = ../loc_strings.hpp; sourceTree = "<group>"; };
 		4A47933B1E7F676E002C3631 /* Calibration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Calibration.cpp; path = ../Calibration.cpp; sourceTree = "<group>"; };
 		4A47933C1E7F676E002C3631 /* Calibration.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Calibration.hpp; path = ../Calibration.hpp; sourceTree = "<group>"; };
 		4A5FA0B31DFE138D00795630 /* readtex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readtex.c; sourceTree = "<group>"; };
@@ -221,6 +224,8 @@
 				4A9142191DF645A900DF4FEE /* fileUploader.c */,
 				4A9143511DF6660700DF4FEE /* flow.hpp */,
 				4A9143521DF6660700DF4FEE /* flow.cpp */,
+				4A17ED982A95956F009FAA72 /* loc_strings.hpp */,
+				4A17ED972A95956F009FAA72 /* loc_strings.cpp */,
 				4AB6B1861E68B7C60034F03C /* prefs.hpp */,
 				4AB6B1871E68B89C0034F03C /* prefsNull.cpp */,
 				4A6223CF1E6CFBA8002F0096 /* prefsLibConfig.cpp */,
@@ -423,6 +428,7 @@
 				4A9143721DF666E200DF4FEE /* glut_hel12.c in Sources */,
 				4AD419991E6FB37300DC036C /* PrefsWindowController.mm in Sources */,
 				4A5FA0BB1DFE140000795630 /* EdenTime.c in Sources */,
+				4A17ED992A95956F009FAA72 /* loc_strings.cpp in Sources */,
 				4A9143751DF666E200DF4FEE /* glut_roman.c in Sources */,
 				4A9143781DF666E200DF4FEE /* glut_tr10.c in Sources */,
 				4A9143741DF666E200DF4FEE /* glut_mroman.c in Sources */,

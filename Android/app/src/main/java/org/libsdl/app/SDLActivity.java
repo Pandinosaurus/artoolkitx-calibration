@@ -50,6 +50,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -57,7 +60,7 @@ import java.util.Locale;
 /**
     SDL Activity
 */
-public class SDLActivity extends Activity implements View.OnSystemUiVisibilityChangeListener {
+public class SDLActivity extends AppCompatActivity implements View.OnSystemUiVisibilityChangeListener {
     private static final String TAG = "SDL";
     private static final int SDL_MAJOR_VERSION = 3;
     private static final int SDL_MINOR_VERSION = 0;
@@ -396,7 +399,9 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         // Set up the surface
         mSurface = createSDLSurface(this);
 
-        mLayout = new RelativeLayout(this);
+        //mLayout = new RelativeLayout(this);
+        setContentView(R.layout.cameracalibrationactivity);
+        mLayout = findViewById(R.id.content);
         mLayout.addView(mSurface);
 
         // Get our current screen orientation and pass it down.
@@ -413,7 +418,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         } catch(Exception ignored) {
         }
 
-        setContentView(mLayout);
+        //setContentView(mLayout);
 
         setWindowStyle(false);
 
