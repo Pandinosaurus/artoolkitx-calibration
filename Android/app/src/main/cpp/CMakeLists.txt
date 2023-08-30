@@ -24,7 +24,7 @@ project("artoolkitx_calib_camera"
 
 set(ARTOOLKITX_CAMERA_CALIBRATION_HOME "${CMAKE_CURRENT_SOURCE_DIR}/../../../../..")
 set(ARTOOLKITX_HOME "${ARTOOLKITX_CAMERA_CALIBRATION_HOME}/depends/android/artoolkitx")
-list(APPEND CMAKE_MODULE_PATH "${ARTOOLKITX_HOME}/Source/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # armeabi-v7a requires cpufeatures library?
 # include(AndroidNdkModules)
@@ -41,7 +41,6 @@ include_directories(${ARTOOLKITX_CAMERA_CALIBRATION_HOME})
 
 set(CMAKE_LIBRARY_ARCHITECTURE "${ANDROID_ABI}")
 list(APPEND CMAKE_FIND_ROOT_PATH "${ARTOOLKITX_CAMERA_CALIBRATION_HOME}/depends/android")
-list(APPEND CMAKE_FIND_ROOT_PATH "${ARTOOLKITX_HOME}/Source/depends/android")
 
 # SDL
 find_path(
@@ -74,7 +73,7 @@ target_include_directories(main PRIVATE ${JPEG_INCLUDE_DIR})
 target_link_libraries(main ${JPEG_LIBRARIES})
 
 # OpenCV
-set(OpenCV_PATH "${ARTOOLKITX_HOME}/Source/depends/android/lib/${ANDROID_ABI}")
+set(OpenCV_PATH "${ARTOOLKITX_CAMERA_CALIBRATION_HOME}/depends/android/lib/${ANDROID_ABI}")
 find_package(OpenCV REQUIRED)
 if(OpenCV_FOUND)
     target_include_directories(main PRIVATE ${OpenCV_INCLUDE_DIR})
