@@ -879,7 +879,7 @@ static void init(int argc, char *argv[])
     }
 }
 
-static void drawBackground(const float width, const float height, const float x, const float y, const bool drawBorder)
+static void drawBackground(const float width, const float height, const float x, const float y, const bool drawBorder, const GLfloat p[16])
 {
     GLfloat vertices[4][2];
 #if HAVE_GLES2
@@ -893,7 +893,7 @@ static void drawBackground(const float width, const float height, const float x,
     vertices[3][0] = x; vertices[3][1] = height + y;
     
 #if !HAVE_GLES2
-    glLoadIdentity();
+    glLoadIdentity(); // Reset to ortho origin. Assumes MODELVIEW mode. 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -912,6 +912,8 @@ static void drawBackground(const float width, const float height, const float x,
         glDrawArrays(GL_LINE_LOOP, 0, 4);
     }
 #else
+    glUseProgram(program);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_PROJECTION_MATRIX], 1, GL_FALSE, p);
     glStateCacheDisableDepthTest();
     glStateCacheBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glStateCacheEnableBlend();
@@ -930,15 +932,17 @@ static void drawBackground(const float width, const float height, const float x,
 
 // An animation while we're waiting.
 // Designed to be drawn on background of at least 3xsquareSize wide and tall.
-static void drawBusyIndicator(int positionX, int positionY, int squareSize, struct timeval *tp)
+static void drawBusyIndicator(int positionX, int positionY, int squareSize, struct timeval *tp, const GLfloat p[16])
 {
-#if !HAVE_GLES2
     const GLfloat square_vertices [4][2] = { {0.5f, 0.5f}, {squareSize - 0.5f, 0.5f}, {squareSize - 0.5f, squareSize - 0.5f}, {0.5f, squareSize - 0.5f} };
     int i;
     
     int hundredthSeconds = (int)tp->tv_usec / 1E4;
+    int secDiv255 = (int)tp->tv_usec / 3921;
+    int secMod6 = tp->tv_sec % 6;
     
     // Set up drawing.
+#if !HAVE_GLES2
     glPushMatrix();
     glLoadIdentity();
     glDisable(GL_DEPTH_TEST);
@@ -950,14 +954,28 @@ static void drawBusyIndicator(int positionX, int positionY, int squareSize, stru
     glDisableClientState(GL_NORMAL_ARRAY);
     glClientActiveTexture(GL_TEXTURE0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#else
+    GLfloat mvp[16];
+    glStateCacheDisableDepthTest();
+    glStateCacheDisableBlend();
+    glVertexAttribPointer(ATTRIBUTE_VERTEX, 2, GL_FLOAT, GL_FALSE, 0, square_vertices);
+    glEnableVertexAttribArray(ATTRIBUTE_VERTEX);
+#endif
     
     for (i = 0; i < 4; i++) {
+        float tx = (float)(positionX + ((i + 1)/2 != 1 ? -squareSize : 0.0f));
+        float ty = (float)(positionY + (i / 2 == 0 ? 0.0f : -squareSize));
+#if !HAVE_GLES2
         glLoadIdentity();
-        glTranslatef((float)(positionX + ((i + 1)/2 != 1 ? -squareSize : 0.0f)), (float)(positionY + (i / 2 == 0 ? 0.0f : -squareSize)), 0.0f); // Order: UL, UR, LR, LL.
+        glTranslatef(tx, ty , 0.0f); // Order: UL, UR, LR, LL.
+#else
+        mtxLoadMatrixf(mvp, p);
+        mtxTranslatef(mvp, tx, ty, 0.0f);
+        glUseProgram(program);
+        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_PROJECTION_MATRIX], 1, GL_FALSE, mvp);
+#endif
         if (i == hundredthSeconds / 25) {
             unsigned char r, g, b;
-            int secDiv255 = (int)tp->tv_usec / 3921;
-            int secMod6 = tp->tv_sec % 6;
             if (secMod6 == 0) {
                 r = 255; g = secDiv255; b = 0;
             } else if (secMod6 == 1) {
@@ -971,13 +989,24 @@ static void drawBusyIndicator(int positionX, int positionY, int squareSize, stru
             } else {
                 r = 255; g = 0; b = secDiv255;
             }
+#if !HAVE_GLES2
             glColor4ub(r, g, b, 255);
+#else
+            const float color[4] = {(float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f};
+            glUniform4fv(uniforms[UNIFORM_COLOR], 1, color);
+#endif
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         }
+#if !HAVE_GLES2
         glColor4ub(255, 255, 255, 255);
+#else
+        const float colorWhite[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+        glUniform4fv(uniforms[UNIFORM_COLOR], 1, colorWhite);
+#endif
         glDrawArrays(GL_LINE_LOOP, 0, 4);
     }
     
+#if !HAVE_GLES2
     glPopMatrix();
 #endif // !HAVE_GLES2
 }
@@ -1136,20 +1165,26 @@ void drawView(void)
     //
     // Setup for drawing on top of video frame, in viewPort coordinates.
     //
-#if 0
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+#if 0 // NOT USED
     bottom = 0.0f;
     top = (float)(viewPort[viewPortIndexHeight]);
     left = 0.0f;
     right = (float)(viewPort[viewPortIndexWidth]);
+#  if !HAVE_GLES2
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     glOrthof(left, right, bottom, top, -1.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
+#  else
+    mtxLoadIdentityf(p);
+    mtxOrthof(p, left, right, bottom, top, -1.0f, 1.0f);
+    glUseProgram(program);
+    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_PROJECTION_MATRIX], 1, GL_FALSE, p);
+#  endif    
     EdenGLFontSetViewSize(right, top);
     EdenMessageSetViewSize(right, top, gDisplayDPI);
-#endif
+#endif // 0
     
     //
     // Setup for drawing on screen, with correct orientation for user.
@@ -1161,12 +1196,11 @@ void drawView(void)
     right = (float)contextWidth;
     mtxLoadIdentityf(p);
     mtxOrthof(p, left, right, bottom, top, -1.0f, 1.0f);
-    mtxLoadIdentityf(m);
 #if !HAVE_GLES2
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(p);
     glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(m);
+    glLoadIdentity();
 #else
     glUseProgram(program);
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_PROJECTION_MATRIX], 1, GL_FALSE, p);
@@ -1179,7 +1213,7 @@ void drawView(void)
     
     // Draw status bar with centred status message.
     if (statusBarMessage[0]) {
-        drawBackground(right, statusBarHeight, 0.0f, 0.0f, false);
+        drawBackground(right, statusBarHeight, 0.0f, 0.0f, false, p);
         glDisable(GL_BLEND);
         EdenGLFontDrawLine(0, p, statusBarMessage, 0.0f, 2.0f, H_OFFSET_VIEW_CENTER_TO_TEXT_CENTER, V_OFFSET_VIEW_BOTTOM_TO_TEXT_BASELINE);
     }
@@ -1196,8 +1230,8 @@ void drawView(void)
             h = MAX(FONT_SIZE, 3*squareSize) + 2*4.0f /* box margin */;
             x = right - (w + 2.0f);
             y = statusBarHeight + 2.0f;
-            drawBackground(w, h, x, y, true);
-            if (status == 1) drawBusyIndicator((int)(x + 4.0f + 1.5f*squareSize), (int)(y + 4.0f + 1.5f*squareSize), squareSize, &time);
+            drawBackground(w, h, x, y, true, p);
+            if (status == 1) drawBusyIndicator((int)(x + 4.0f + 1.5f*squareSize), (int)(y + 4.0f + 1.5f*squareSize), squareSize, &time, p);
             EdenGLFontDrawLine(0, p, (unsigned char *)uploadStatus, x + 4.0f + 3*squareSize, y + (h - FONT_SIZE)/2.0f, H_OFFSET_VIEW_LEFT_EDGE_TO_TEXT_LEFT_EDGE, V_OFFSET_VIEW_BOTTOM_TO_TEXT_BASELINE);
         }
     }

@@ -192,7 +192,13 @@ if [ $BUILD_IOS ] ; then
     xcodebuild -target "artoolkitX Camera Calibration Utility" -configuration Release -destination generic/platform=iOS
     )
 fi
-# /BUILD_MACOS
+# /BUILD_IOS
+
+if [ "$OS" = "Darwin" ] || [ "$OS" = "Linux" ] || [ "$OS" = "Windows" ] ; then
+# ======================================================================
+#  Build platforms hosted by macOS/Linux/Windows
+# ======================================================================
+
 
 if [ $BUILD_ANDROID ] ; then
     
@@ -211,12 +217,16 @@ if [ $BUILD_ANDROID ] ; then
     (cd "${OURDIR}/Android"
     echo "Building Android project"
     ./gradlew assembleRelease
+    if [[ ]] ; then
+        zipalign -v -p 4 my-app-unsigned.apk my-app-unsigned-aligned.apk
+    
+    fi
     )
 fi
 # /BUILD_ANDROID
 
 fi
-# /Darwin
+# /Darwin/Linux/Windows
 
 if [ "$OS" = "Linux" ] ; then
 # ======================================================================
