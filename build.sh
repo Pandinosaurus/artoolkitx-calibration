@@ -193,6 +193,8 @@ if [ $BUILD_IOS ] ; then
     )
 fi
 # /BUILD_IOS
+fi
+# /Darwin
 
 if [ "$OS" = "Darwin" ] || [ "$OS" = "Linux" ] || [ "$OS" = "Windows" ] ; then
 # ======================================================================
@@ -203,12 +205,18 @@ if [ "$OS" = "Darwin" ] || [ "$OS" = "Linux" ] || [ "$OS" = "Windows" ] ; then
 if [ $BUILD_ANDROID ] ; then
     
     cd "${OURDIR}"
+    if [ ! -d "depends/android/include/opencv2" ] ; then
+        curl --location "https://github.com/artoolkitx/opencv/releases/download/4.6.0/opencv-4.6.0-dev-artoolkitx-android.tgz" -o opencv2.tgz
+        tar xzf opencv2.tgz --strip-components=1 -C depends/android
+        rm opencv2.tgz
+    fi
     # If artoolkitx folder is not a symlink, fetch artoolkitx from latest build into a location where the build can find it.
     if [[ ! -L "${OURDIR}/depends/android/artoolkitx" ]] ; then
         IMAGE="artoolkitx-${ARTOOLKITX_VERSION}-Android.zip"
         find_or_fetch_artoolkitx "${IMAGE}"
         rm -rf "${OURDIR}/depends/android/artoolkitx"
-        unzip "${OURDIR}/${SDK_FILENAME}" -d "${OURDIR}/depends/android/artoolkitx"
+        unzip -q "${OURDIR}/${IMAGE}" -d "${OURDIR}/depends/android"
+        mv "${OURDIR}/depends/android/artoolkitX" "${OURDIR}/depends/android/artoolkitx"
     fi
     
     # Make the version number available to Gradle.
@@ -217,10 +225,6 @@ if [ $BUILD_ANDROID ] ; then
     (cd "${OURDIR}/Android"
     echo "Building Android project"
     ./gradlew assembleRelease
-    if [[ ]] ; then
-        zipalign -v -p 4 my-app-unsigned.apk my-app-unsigned-aligned.apk
-    
-    fi
     )
 fi
 # /BUILD_ANDROID
