@@ -84,7 +84,7 @@ then
     CPUS=`/usr/bin/nproc`
     TAR='/bin/tar'
     # Identify Linux OS. Sets useful variables: ID, ID_LIKE, VERSION, NAME, PRETTY_NAME.
-    source /etc/os-release
+    #source /etc/os-release
     # Windows Subsystem for Linux identifies itself as 'Linux'. Additional test required.
     if grep -qE "(Microsoft|WSL)" /proc/version &> /dev/null ; then
         OS='Windows'
@@ -207,7 +207,7 @@ if [ $BUILD_ANDROID ] ; then
     cd "${OURDIR}"
     if [ ! -d "depends/android/include/opencv2" ] ; then
         curl --location "https://github.com/artoolkitx/opencv/releases/download/4.6.0/opencv-4.6.0-dev-artoolkitx-android.tgz" -o opencv2.tgz
-        tar xzf opencv2.tgz --strip-components=1 -C depends/android
+        tar xzf opencv2.tgz --strip-components=1 --warning=no-unknown-keyword -C depends/android
         rm opencv2.tgz
     fi
     # If artoolkitx folder is not a symlink, fetch artoolkitx from latest build into a location where the build can find it.
@@ -220,7 +220,8 @@ if [ $BUILD_ANDROID ] ; then
     fi
     
     # Make the version number available to Gradle.
-    sed -E -i "" -e "s/versionCode [0-9]+/versionCode ${VERSION_INT}/" -e "s/versionName \"[0-9\.]+\"/versionName \"${VERSION}\"/" Android/app/build.gradle
+    sed -E -i.bak -e "s/versionCode [0-9]+/versionCode ${VERSION_INT}/" -e "s/versionName \"[0-9\.]+\"/versionName \"${VERSION}\"/" Android/app/build.gradle
+    rm -f Android/app/build.gradle.bak
 
     (cd "${OURDIR}/Android"
     echo "Building Android project"
