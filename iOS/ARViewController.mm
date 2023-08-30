@@ -665,34 +665,31 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
 
 // An animation while we're waiting.
 // Designed to be drawn on background of at least 3xsquareSize wide and tall.
-- (void) drawBusyIndicatorPositionX:(int)positionX positionY:(int)positionY squareSize:(int)squareSize tp:(struct timeval *)tp
+- (void) drawBusyIndicatorPositionX:(int)positionX positionY:(int)positionY squareSize:(int)squareSize tp:(struct timeval *)tp projection:(GLfloat [16])p
 {
-#if 0
     const GLfloat square_vertices [4][2] = { {0.5f, 0.5f}, {squareSize - 0.5f, 0.5f}, {squareSize - 0.5f, squareSize - 0.5f}, {0.5f, squareSize - 0.5f} };
     int i;
     
     int hundredthSeconds = (int)tp->tv_usec / 1E4;
+    int secDiv255 = (int)tp->tv_usec / 3921;
+    int secMod6 = tp->tv_sec % 6;
     
     // Set up drawing.
-    glPushMatrix();
-    glLoadIdentity();
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-    glVertexPointer(2, GL_FLOAT, 0, square_vertices);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glClientActiveTexture(GL_TEXTURE0);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    GLfloat mvp[16];
+    glStateCacheDisableDepthTest();
+    glStateCacheDisableBlend();
+    glVertexAttribPointer(ATTRIBUTE_VERTEX, 2, GL_FLOAT, GL_FALSE, 0, square_vertices);
+    glEnableVertexAttribArray(ATTRIBUTE_VERTEX);
     
     for (i = 0; i < 4; i++) {
-        glLoadIdentity();
-        glTranslatef((float)(positionX + ((i + 1)/2 != 1 ? -squareSize : 0.0f)), (float)(positionY + (i / 2 == 0 ? 0.0f : -squareSize)), 0.0f); // Order: UL, UR, LR, LL.
+        float tx = (float)(positionX + ((i + 1)/2 != 1 ? -squareSize : 0.0f));
+        float ty = (float)(positionY + (i / 2 == 0 ? 0.0f : -squareSize));
+        mtxLoadMatrixf(mvp, p);
+        mtxTranslatef(mvp, tx, ty, 0.0f);
+        glUseProgram(program);
+        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEW_PROJECTION_MATRIX], 1, GL_FALSE, mvp);
         if (i == hundredthSeconds / 25) {
-            char r, g, b;
-            int secDiv255 = (int)tp->tv_usec / 3921;
-            int secMod6 = tp->tv_sec % 6;
+            unsigned char r, g, b;
             if (secMod6 == 0) {
                 r = 255; g = secDiv255; b = 0;
             } else if (secMod6 == 1) {
@@ -706,15 +703,14 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
             } else {
                 r = 255; g = 0; b = secDiv255;
             }
-            glColor4ub(r, g, b, 255);
+            const float color[4] = {(float)r/255.0f, (float)g/255.0f, (float)b/255.0f, 1.0f};
+            glUniform4fv(uniforms[UNIFORM_COLOR], 1, color);
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         }
-        glColor4ub(255, 255, 255, 255);
+        const float colorWhite[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+        glUniform4fv(uniforms[UNIFORM_COLOR], 1, colorWhite);
         glDrawArrays(GL_LINE_LOOP, 0, 4);
     }
-    
-    glPopMatrix();
-#endif
 }
 
 - (void)tearDownGL
@@ -768,7 +764,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         
         if (!gPostVideoSetupDone) {
             
-            [ARViewController displayToastWithMessage:[NSString stringWithFormat:@"Camera: %dx%d", vs->getVideoWidth(), vs->getVideoHeight()]];
+            [ARViewController displayToastWithMessage:[NSString stringWithFormat:@"Camera: %dx%d", vs->getVideoWidth(), vs->getVideoHeight()] durationSeconds:5.0f];
             
             gCameraIsFrontFacing = false;
             AR2VideoParamT *vid = vs->getAR2VideoParam();
@@ -1028,7 +1024,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
             x = right - (w + 2.0f);
             y = statusBarHeight + 2.0f;
             [self drawBackgroundWidth:w height:h x:x y:y border:true projection:p];
-            if (status == 1) [self drawBusyIndicatorPositionX:(int)(x + 4.0f + 1.5f*squareSize) positionY:(int)(y + 4.0f + 1.5f*squareSize) squareSize:squareSize tp:&time];
+            if (status == 1) [self drawBusyIndicatorPositionX:(int)(x + 4.0f + 1.5f*squareSize) positionY:(int)(y + 4.0f + 1.5f*squareSize) squareSize:squareSize tp:&time projection:p];
             EdenGLFontDrawLine(0, p, (unsigned char *)uploadStatus, x + 4.0f + 3*squareSize, y + (h - FONT_SIZE)/2.0f, H_OFFSET_VIEW_LEFT_EDGE_TO_TEXT_LEFT_EDGE, V_OFFSET_VIEW_BOTTOM_TO_TEXT_BASELINE);
         }
     }
@@ -1382,7 +1378,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
     
 }
 
-+ (void)displayToastWithMessage:(NSString *)toastMessage
++ (void)displayToastWithMessage:(NSString *)toastMessage durationSeconds:(float)durationSeconds
 {
     [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
         UIWindow * keyWindow = [[UIApplication sharedApplication] keyWindow];
@@ -1400,7 +1396,7 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
         
         [keyWindow addSubview:toastView];
         
-        [UIView animateWithDuration: 3.0f
+        [UIView animateWithDuration: durationSeconds
                               delay: 0.0
                             options: UIViewAnimationOptionCurveEaseOut
                          animations: ^{
@@ -1411,6 +1407,10 @@ static void saveParam(const ARParam *param, ARdouble err_min, ARdouble err_avg, 
                          }
          ];
     }];
+}
+
++ (void)displayToastWithMessage:(NSString *)toastMessage {
+    [ARViewController displayToastWithMessage:toastMessage durationSeconds:3.5f];
 }
 
 @end
