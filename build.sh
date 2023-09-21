@@ -163,7 +163,7 @@ if [ $BUILD_MACOS ] ; then
 
     # Insert the calibration server upload URL and authentication tokens into the build config.
     if [[ ! -z "${ARTOOLKITX_CSUU}" && ! -z "${ARTOOLKITX_CSAT}" ]]; then
-        echo "GCC_PREPROCESSOR_DEFINITIONS=ARTOOLKITX_CSUU=\\\"${ARTOOLKITX_CSUU////\/}\\\" ARTOOLKITX_CSAT=\\\"${ARTOOLKITX_CSAT}\\\"" >> macOS/user-config.xcconfig
+        echo "GCC_PREPROCESSOR_DEFINITIONS=ARTOOLKITX_CSUU=\\\"${ARTOOLKITX_CSUU////\\/}\\\" ARTOOLKITX_CSAT=\\\"${ARTOOLKITX_CSAT}\\\"" >> macOS/user-config.xcconfig
     fi
     
     (cd macOS
@@ -195,7 +195,7 @@ if [ $BUILD_IOS ] ; then
     
     # Insert the calibration server upload URL and authentication tokens into the build config.
     if [[ ! -z "${ARTOOLKITX_CSUU}" && ! -z "${ARTOOLKITX_CSAT}" ]]; then
-        echo "GCC_PREPROCESSOR_DEFINITIONS=ARTOOLKITX_CSUU=\\\"${ARTOOLKITX_CSUU////\/}\\\" ARTOOLKITX_CSAT=\\\"${ARTOOLKITX_CSAT}\\\"" >> iOS/user-config.xcconfig
+        echo "GCC_PREPROCESSOR_DEFINITIONS=ARTOOLKITX_CSUU=\\\"${ARTOOLKITX_CSUU////\\/}\\\" ARTOOLKITX_CSAT=\\\"${ARTOOLKITX_CSAT}\\\"" >> iOS/user-config.xcconfig
     fi
     (cd iOS
     xcodebuild -target "artoolkitX Camera Calibration Utility" -configuration Release -destination generic/platform=iOS
@@ -234,8 +234,8 @@ if [ $BUILD_ANDROID ] ; then
 
     # Insert the calibration server upload URL and authentication tokens on the Java side. On the C/C++ side, this is done by in CMakeLists.txt.
     if [[ ! -z "${ARTOOLKITX_CSUU}" && ! -z "${ARTOOLKITX_CSAT}" ]]; then
-        sed -E -i.bak -e "s/ARTOOLKITX_CSUU *= *\".*\"/ARTOOLKITX_CSUU = \"${ARTOOLKITX_CSUU////\/}\"/" Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java
-        sed -E -i.bak -e "s/ARTOOLKITX_CSAT *= *\".*\"/ARTOOLKITX_CSAT = \"${ARTOOLKITX_CSAT//&/\&}\"/" Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java
+        sed -E -i.bak -e "s/ARTOOLKITX_CSUU *= *\".*\"/ARTOOLKITX_CSUU = \"${ARTOOLKITX_CSUU////\\/}\"/" Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java
+        sed -E -i.bak -e "s/ARTOOLKITX_CSAT *= *\".*\"/ARTOOLKITX_CSAT = \"${ARTOOLKITX_CSAT//&/\\&}\"/" Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java
         rm -f Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java.bak
     fi
 
