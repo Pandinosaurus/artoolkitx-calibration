@@ -32,6 +32,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_library(main SHARED)
 
+if(DEFINED ENV{ARTOOLKITX_CSUU})
+    add_definitions("-DARTOOLKITX_CSUU=\"$ENV{ARTOOLKITX_CSUU}\"")
+endif()
+if(DEFINED ENV{ARTOOLKITX_CSAT})
+    add_definitions("-DARTOOLKITX_CSAT=\"$ENV{ARTOOLKITX_CSAT}\"")
+endif()
+
 # Enable C++11 for GCC/Clang compilers.
 set(CMAKE_CXX_STANDARD "11")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

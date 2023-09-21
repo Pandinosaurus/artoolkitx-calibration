@@ -34,6 +34,13 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     add_definitions("-DDEBUG=1")
 endif()
 
+if(DEFINED ENV{ARTOOLKITX_CSUU})
+    add_definitions("-DARTOOLKITX_CSUU=\"$ENV{ARTOOLKITX_CSUU}\"")
+endif()
+if(DEFINED ENV{ARTOOLKITX_CSAT})
+    add_definitions("-DARTOOLKITX_CSAT=\"$ENV{ARTOOLKITX_CSAT}\"")
+endif()
+
 # Search prefix.
 list(APPEND CMAKE_MODULE_PATH "${ARTOOLKITX_HOME}/Source/cmake")
 if(ARX_TARGET_PLATFORM_VARIANT)

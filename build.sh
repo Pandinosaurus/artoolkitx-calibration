@@ -160,6 +160,11 @@ if [ $BUILD_MACOS ] ; then
     # Make the version number available to Xcode.
     cp macOS/user-config-in.xcconfig macOS/user-config.xcconfig
     sed -E -i "" -e "s/@VERSION@/${VERSION}/" macOS/user-config.xcconfig
+
+    # Insert the calibration server upload URL and authentication tokens into the build config.
+    if [[ ! -z "${ARTOOLKITX_CSUU}" && ! -z "${ARTOOLKITX_CSAT}" ]]; then
+        echo "GCC_PREPROCESSOR_DEFINITIONS=ARTOOLKITX_CSUU=\\\"${ARTOOLKITX_CSUU////\/}\\\" ARTOOLKITX_CSAT=\\\"${ARTOOLKITX_CSAT}\\\"" >> macOS/user-config.xcconfig
+    fi
     
     (cd macOS
     xcodebuild -target "artoolkitX Camera Calibration Utility" -configuration Release
@@ -188,6 +193,10 @@ if [ $BUILD_IOS ] ; then
     cp iOS/user-config-in.xcconfig iOS/user-config.xcconfig
     sed -E -i "" -e "s/@VERSION@/${VERSION}/" iOS/user-config.xcconfig
     
+    # Insert the calibration server upload URL and authentication tokens into the build config.
+    if [[ ! -z "${ARTOOLKITX_CSUU}" && ! -z "${ARTOOLKITX_CSAT}" ]]; then
+        echo "GCC_PREPROCESSOR_DEFINITIONS=ARTOOLKITX_CSUU=\\\"${ARTOOLKITX_CSUU////\/}\\\" ARTOOLKITX_CSAT=\\\"${ARTOOLKITX_CSAT}\\\"" >> iOS/user-config.xcconfig
+    fi
     (cd iOS
     xcodebuild -target "artoolkitX Camera Calibration Utility" -configuration Release -destination generic/platform=iOS
     )
@@ -222,6 +231,13 @@ if [ $BUILD_ANDROID ] ; then
     # Make the version number available to Gradle.
     sed -E -i.bak -e "s/versionCode [0-9]+/versionCode ${VERSION_INT}/" -e "s/versionName \"[0-9\.]+\"/versionName \"${VERSION}\"/" Android/app/build.gradle
     rm -f Android/app/build.gradle.bak
+
+    # Insert the calibration server upload URL and authentication tokens on the Java side. On the C/C++ side, this is done by in CMakeLists.txt.
+    if [[ ! -z "${ARTOOLKITX_CSUU}" && ! -z "${ARTOOLKITX_CSAT}" ]]; then
+        sed -E -i.bak -e "s/ARTOOLKITX_CSUU *= *\".*\"/ARTOOLKITX_CSUU = \"${ARTOOLKITX_CSUU////\/}\"/" Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java
+        sed -E -i.bak -e "s/ARTOOLKITX_CSAT *= *\".*\"/ARTOOLKITX_CSAT = \"${ARTOOLKITX_CSAT//&/\&}\"/" Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java
+        rm -f Android/app/src/main/java/org/artoolkitx/utilities/cameracalibration/Config.java.bak
+    fi
 
     (cd "${OURDIR}/Android"
     echo "Building Android project"

@@ -92,7 +92,7 @@ void *initPreferences(void)
     if (packageNameC) {
         free(prefsFileName);
         prefsFileName = NULL;
-        if (asprintf(&prefsFileName, "%s_preferences", packageNameC) != -1) {
+        if (asprintf(&prefsFileName, "%s_preferences", packageNameC) < 0) {
             ARLOGe("initPreferences error\n");
         }
     }
