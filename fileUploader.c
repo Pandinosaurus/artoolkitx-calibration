@@ -301,6 +301,26 @@ static void *fileUploader(THREAD_HANDLE_T *threadHandle)
     	    	break;
     	    }
 
+#ifdef ANDROID
+            // On Android, use the ca-bundle.crt that we cached earlier.
+            char *cacertsDir = NULL;
+            char *cacheDir = arUtilGetResourcesDirectoryPath(AR_UTIL_RESOURCES_DIRECTORY_BEHAVIOR_USE_APP_CACHE_DIR, NULL);
+            if (!cacheDir || asprintf(&cacertsDir, "%s/cacerts/ca-bundle.crt", cacheDir) < 0) {
+                ARLOGe("Error getting cacert path.\n");
+            	errorCode = -1;
+            	free(cacheDir);
+    	    	break;
+            }
+            free(cacheDir);
+    	    curlErr = curl_easy_setopt(curlHandle, CURLOPT_CAINFO, cacertsDir);
+    	    free(cacertsDir);
+    	    if (curlErr != CURLE_OK) {
+    	        ARLOGe("Error setting CURL SSL options: %s (%d)\n", curl_easy_strerror(curlErr), curlErr);
+                errorCode = -1;
+    	        break;
+    	    }
+#endif
+            
             // The commented-out section below disables SSL peer verification. Uncommenting this will make
             // https connections insecure, but will allow (for example) connections to a server using a
             // self-signed SSL certificate and when you have not provided CURL with a CAfile via
